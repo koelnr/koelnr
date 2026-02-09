@@ -3,6 +3,7 @@ import { Link } from "react-router";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { SiteConfig } from "@/config/site";
+import Logo from "@/assets/logo";
 
 export function Navbar({ config }: { config: SiteConfig }) {
   const [open, setOpen] = useState(false);
@@ -10,8 +11,11 @@ export function Navbar({ config }: { config: SiteConfig }) {
   return (
     <header className="sticky top-0 z-50 border-b border-border/40 bg-background/80 backdrop-blur-lg">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        <Link to="/" className="text-xl font-bold tracking-tight">
-          {config.name}
+        <Link
+          to="/"
+          className="inline-flex items-center gap-x-2 text-xl font-bold tracking-tight"
+        >
+          <Logo className="size-10" />
         </Link>
 
         {/* Desktop nav */}

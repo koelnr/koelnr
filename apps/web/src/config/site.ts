@@ -5,7 +5,7 @@ function img(w: number, h: number, bg = "0a0a0a", fg = "fafafa") {
 }
 
 export const siteConfig = {
-  name: "Koelnr",
+  name: "koelnr",
   tagline: "Doorstep Car Care, Done Right",
   description:
     "Professional doorstep car wash services in Ludhiana. Subscriptions for daily care, on-demand washes when you need them.",
@@ -65,8 +65,7 @@ export const siteConfig = {
     {
       name: "Smart 3D",
       schedule: "3 days/week",
-      inclusions:
-        "3 wash-days + 1 Pressure Wash upgrade per week",
+      inclusions: "3 wash-days + 1 Pressure Wash upgrade per week",
       washDays: "~13/month",
       hatchSedan: { perWash: "₹193", monthly: "₹2,499" },
       suvMuv: { perWash: "₹223", monthly: "₹2,899" },
@@ -75,8 +74,7 @@ export const siteConfig = {
     {
       name: "Pro 6D",
       schedule: "Mon–Sat (Sun off)",
-      inclusions:
-        "6 wash-days + 3 Pressure Wash upgrades per week",
+      inclusions: "6 wash-days + 3 Pressure Wash upgrades per week",
       washDays: "~26/month",
       hatchSedan: { perWash: "₹193", monthly: "₹4,999" },
       suvMuv: { perWash: "₹219", monthly: "₹5,699" },
@@ -97,11 +95,19 @@ export const siteConfig = {
     { name: "Extra Pressure Wash", hatchSedan: "₹399", suvMuv: "₹449" },
     { name: "Extra Interior Refresh", hatchSedan: "₹249", suvMuv: "₹299" },
     { name: "Deep Interior", hatchSedan: "₹1,199+", suvMuv: "₹1,199+" },
-    { name: "Tyre Dressing / Polish Finish", hatchSedan: "₹199–₹399", suvMuv: "₹199–₹399" },
+    {
+      name: "Tyre Dressing / Polish Finish",
+      hatchSedan: "₹199–₹399",
+      suvMuv: "₹199–₹399",
+    },
   ],
   onDemand: {
     exterior: [
-      { name: "Basic Exterior (low-water)", hatchSedan: "₹299", suvMuv: "₹349" },
+      {
+        name: "Basic Exterior (low-water)",
+        hatchSedan: "₹299",
+        suvMuv: "₹349",
+      },
       { name: "Foam Exterior", hatchSedan: "₹399", suvMuv: "₹449" },
       { name: "Pressure Wash + Dry", hatchSedan: "₹549", suvMuv: "₹649" },
     ],
@@ -111,7 +117,11 @@ export const siteConfig = {
     ],
     combos: [
       { name: "Foam + Interior Refresh", hatchSedan: "₹599", suvMuv: "₹699" },
-      { name: "Pressure + Interior Refresh", hatchSedan: "₹749", suvMuv: "₹899" },
+      {
+        name: "Pressure + Interior Refresh",
+        hatchSedan: "₹749",
+        suvMuv: "₹899",
+      },
     ],
   },
   policies: [
