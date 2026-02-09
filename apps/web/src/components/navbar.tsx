@@ -1,12 +1,16 @@
 import { useState } from "react";
 import { Link } from "react-router";
-import { Menu, X } from "lucide-react";
+import { Menu, X, LogOut, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useAuthStore } from "@/stores/auth-store";
 import type { SiteConfig } from "@/config/site";
 import Logo from "@/assets/logo";
 
 export function Navbar({ config }: { config: SiteConfig }) {
   const [open, setOpen] = useState(false);
+  const user = useAuthStore((s) => s.user);
+  const loading = useAuthStore((s) => s.loading);
+  const signOut = useAuthStore((s) => s.signOut);
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 border-b border-border/40 bg-background/80 backdrop-blur-lg">
@@ -29,9 +33,47 @@ export function Navbar({ config }: { config: SiteConfig }) {
               {item.label}
             </a>
           ))}
-          <Button size="sm" className="ml-4" asChild>
-            <a href="/#contact">Book Now</a>
-          </Button>
+
+          {!loading && (
+            <div className="ml-4 flex items-center gap-2">
+              {user ? (
+                <>
+                  <Button size="sm" variant="ghost" asChild>
+                    <Link to="/dashboard" className="gap-1.5">
+                      {user.photoURL ? (
+                        <img
+                          src={user.photoURL}
+                          alt=""
+                          className="size-5 rounded-full"
+                          referrerPolicy="no-referrer"
+                        />
+                      ) : (
+                        <User className="size-4" />
+                      )}
+                      {user.displayName || user.email?.split("@")[0]}
+                    </Link>
+                  </Button>
+                  <Button
+                    size="icon-sm"
+                    variant="ghost"
+                    onClick={() => signOut()}
+                    aria-label="Sign out"
+                  >
+                    <LogOut className="size-4" />
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button size="sm" variant="ghost" asChild>
+                    <Link to="/sign-in">Sign in</Link>
+                  </Button>
+                  <Button size="sm" asChild>
+                    <Link to="/sign-up">Sign up</Link>
+                  </Button>
+                </>
+              )}
+            </div>
+          )}
         </nav>
 
         {/* Mobile toggle */}
@@ -57,11 +99,55 @@ export function Navbar({ config }: { config: SiteConfig }) {
               {item.label}
             </a>
           ))}
-          <Button size="sm" className="mt-2 w-full" asChild>
-            <a href="/#contact" onClick={() => setOpen(false)}>
-              Book Now
-            </a>
-          </Button>
+
+          {!loading && (
+            <div className="mt-2 grid gap-2">
+              {user ? (
+                <>
+                  <Button size="sm" variant="outline" className="w-full" asChild>
+                    <Link to="/dashboard" onClick={() => setOpen(false)}>
+                      {user.photoURL ? (
+                        <img
+                          src={user.photoURL}
+                          alt=""
+                          className="size-5 rounded-full"
+                          referrerPolicy="no-referrer"
+                        />
+                      ) : (
+                        <User className="size-4" />
+                      )}
+                      {user.displayName || user.email?.split("@")[0]}
+                    </Link>
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="w-full"
+                    onClick={() => {
+                      signOut();
+                      setOpen(false);
+                    }}
+                  >
+                    <LogOut className="size-4" />
+                    Sign out
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button size="sm" variant="outline" className="w-full" asChild>
+                    <Link to="/sign-in" onClick={() => setOpen(false)}>
+                      Sign in
+                    </Link>
+                  </Button>
+                  <Button size="sm" className="w-full" asChild>
+                    <Link to="/sign-up" onClick={() => setOpen(false)}>
+                      Sign up
+                    </Link>
+                  </Button>
+                </>
+              )}
+            </div>
+          )}
         </nav>
       )}
     </header>
