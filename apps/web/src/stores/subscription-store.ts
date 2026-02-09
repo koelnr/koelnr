@@ -17,8 +17,12 @@ export const useSubscriptionStore = create<SubscriptionState>()((set) => ({
 
   fetchSubscription: async (userId) => {
     set({ loading: true });
-    const sub = await getActiveSubscription(userId);
-    set({ activeSubscription: sub, loading: false });
+    try {
+      const sub = await getActiveSubscription(userId);
+      set({ activeSubscription: sub, loading: false });
+    } catch {
+      set({ loading: false });
+    }
   },
 
   setActiveSubscription: (sub) => set({ activeSubscription: sub }),

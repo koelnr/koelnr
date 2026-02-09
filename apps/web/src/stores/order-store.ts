@@ -17,8 +17,12 @@ export const useOrderStore = create<OrderState>()((set) => ({
 
   fetchOrders: async (userId) => {
     set({ loading: true });
-    const orders = await getUserOrders(userId);
-    set({ orders, loading: false });
+    try {
+      const orders = await getUserOrders(userId);
+      set({ orders, loading: false });
+    } catch {
+      set({ loading: false });
+    }
   },
 
   addOrder: (order) =>

@@ -36,29 +36,41 @@ export const useUserProfileStore = create<UserProfileState>()(
 
       fetchProfile: async (uid) => {
         set({ loading: true });
-        const profile = await getUserProfile(uid);
-        if (profile) {
-          set({ profile, vehicleType: profile.vehicleType, loading: false });
-        } else {
+        try {
+          const profile = await getUserProfile(uid);
+          if (profile) {
+            set({ profile, vehicleType: profile.vehicleType, loading: false });
+          } else {
+            set({ loading: false });
+          }
+        } catch {
           set({ loading: false });
         }
       },
 
       saveProfile: async (uid, data) => {
         set({ loading: true });
-        await createUserProfile(uid, data);
-        const profile = await getUserProfile(uid);
-        set({ profile, vehicleType: data.vehicleType, loading: false });
+        try {
+          await createUserProfile(uid, data);
+          const profile = await getUserProfile(uid);
+          set({ profile, vehicleType: data.vehicleType, loading: false });
+        } catch {
+          set({ loading: false });
+        }
       },
 
       updateProfile: async (uid, data) => {
         set({ loading: true });
-        await updateUserProfile(uid, data);
-        if (data.vehicleType) {
-          set({ vehicleType: data.vehicleType });
+        try {
+          await updateUserProfile(uid, data);
+          if (data.vehicleType) {
+            set({ vehicleType: data.vehicleType });
+          }
+          const profile = await getUserProfile(uid);
+          set({ profile, loading: false });
+        } catch {
+          set({ loading: false });
         }
-        const profile = await getUserProfile(uid);
-        set({ profile, loading: false });
       },
 
       reset: () =>
