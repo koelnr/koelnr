@@ -13,7 +13,7 @@ interface CreateOrderRequest {
   scheduledDate?: string;
 }
 
-export const createOrder = onCall<CreateOrderRequest>(async (request) => {
+export const createOrder = onCall<CreateOrderRequest>({ cors: true }, async (request) => {
   if (!request.auth) {
     throw new HttpsError("unauthenticated", "User must be signed in");
   }

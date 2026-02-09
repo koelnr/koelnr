@@ -10,7 +10,7 @@ interface VerifyPaymentRequest {
   orderId: string;
 }
 
-export const verifyPayment = onCall<VerifyPaymentRequest>(async (request) => {
+export const verifyPayment = onCall<VerifyPaymentRequest>({ cors: true }, async (request) => {
   if (!request.auth) {
     throw new HttpsError("unauthenticated", "User must be signed in");
   }

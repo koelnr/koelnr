@@ -3,7 +3,7 @@ import { getFirestore } from "firebase-admin/firestore";
 import * as crypto from "crypto";
 import { getRazorpayKeySecret } from "./razorpay-client";
 
-export const razorpayWebhook = onRequest(async (req, res) => {
+export const razorpayWebhook = onRequest({ cors: true }, async (req, res) => {
   if (req.method !== "POST") {
     res.status(405).send("Method not allowed");
     return;
