@@ -10,8 +10,8 @@ export const RootLayout = () => {
       <Navbar config={siteConfig} />
       <SmoothScroll className="pt-16">
         <Outlet />
+        <Footer config={siteConfig} />
       </SmoothScroll>
-      <Footer config={siteConfig} />
     </div>
   );
 };
