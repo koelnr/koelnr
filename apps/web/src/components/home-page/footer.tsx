@@ -1,5 +1,7 @@
+import Logo from "@/assets/logo";
 import { Separator } from "@/components/ui/separator";
 import type { SiteConfig } from "@/config/site";
+import { Button } from "../ui/button";
 
 export function Footer({ config }: { config: SiteConfig }) {
   return (
@@ -7,7 +9,10 @@ export function Footer({ config }: { config: SiteConfig }) {
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
           <div className="sm:col-span-2 lg:col-span-1">
-            <div className="text-xl font-bold tracking-tight">
+            <div className="inline-flex items-center gap-x-2 text-xl font-bold tracking-tight">
+              <Button variant="default" size="icon">
+                <Logo className="size-8" />
+              </Button>
               {config.name}
             </div>
             <p className="mt-2 text-sm text-muted-foreground">
