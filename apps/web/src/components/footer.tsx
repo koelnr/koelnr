@@ -2,7 +2,7 @@ import Logo from "@/assets/logo";
 import { Separator } from "@/components/ui/separator";
 import { ScrollReveal } from "@/components/animations/scroll-reveal";
 import type { SiteConfig } from "@/config/site";
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";
 
 export function Footer({ config }: { config: SiteConfig }) {
   return (
