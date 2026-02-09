@@ -8,83 +8,12 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { ScrollReveal } from "@/components/animations/scroll-reveal";
 import { cn } from "@/lib/utils";
 import type { SiteConfig } from "@/config/site";
 
-type Subscription = SiteConfig["subscriptions"][number];
 type OnDemand = SiteConfig["onDemand"];
 type Addon = SiteConfig["subscriberAddons"][number];
-
-function SubscriptionCards({ plans }: { plans: readonly Subscription[] }) {
-  return (
-    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-      {plans.map((plan) => (
-        <Card
-          key={plan.name}
-          className={cn(
-            "relative flex flex-col",
-            plan.highlighted && "border-primary shadow-lg",
-          )}
-        >
-          {plan.highlighted && (
-            <Badge className="absolute -top-3 left-1/2 -translate-x-1/2">
-              Most Popular
-            </Badge>
-          )}
-          <CardHeader className="text-center">
-            <CardTitle className="text-xl">{plan.name}</CardTitle>
-            <CardDescription>{plan.schedule}</CardDescription>
-            <p className="mt-2 text-xs text-muted-foreground">
-              {plan.inclusions}
-            </p>
-            <p className="mt-1 text-xs text-muted-foreground">
-              {plan.washDays}
-            </p>
-          </CardHeader>
-          <CardContent className="flex-1 space-y-4">
-            <div className="rounded-lg border border-border/50 p-4">
-              <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                Hatch / Sedan
-              </div>
-              <div className="mt-1">
-                <span className="text-3xl font-bold">
-                  {plan.hatchSedan.monthly}
-                </span>
-                <span className="text-sm text-muted-foreground">/mo</span>
-              </div>
-              <div className="mt-0.5 text-xs text-muted-foreground">
-                {plan.hatchSedan.perWash}/wash
-              </div>
-            </div>
-            <div className="rounded-lg border border-border/50 p-4">
-              <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                SUV / MUV
-              </div>
-              <div className="mt-1">
-                <span className="text-3xl font-bold">
-                  {plan.suvMuv.monthly}
-                </span>
-                <span className="text-sm text-muted-foreground">/mo</span>
-              </div>
-              <div className="mt-0.5 text-xs text-muted-foreground">
-                {plan.suvMuv.perWash}/wash
-              </div>
-            </div>
-          </CardContent>
-          <CardFooter>
-            <Button
-              className="w-full"
-              variant={plan.highlighted ? "default" : "outline"}
-              asChild
-            >
-              <a href="/#contact">Subscribe</a>
-            </Button>
-          </CardFooter>
-        </Card>
-      ))}
-    </div>
-  );
-}
 
 function PriceRow({
   name,
@@ -192,23 +121,99 @@ export function Pricing({
     <section id="pricing" className="bg-muted/40 py-20 sm:py-28">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Subscriptions */}
-        <div className="text-center">
-          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
-            Subscription Plans
-          </h2>
-          <p className="mt-4 text-lg text-muted-foreground">
-            Subscribe for regular doorstep washes. Billed monthly.
-          </p>
-        </div>
-        <div className="mt-16">
-          <SubscriptionCards plans={subscriptions} />
-        </div>
+        <ScrollReveal direction="up">
+          <div className="text-center">
+            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
+              Subscription Plans
+            </h2>
+            <p className="mt-4 text-lg text-muted-foreground">
+              Subscribe for regular doorstep washes. Billed monthly.
+            </p>
+          </div>
+        </ScrollReveal>
+        <ScrollReveal
+          direction="up"
+          delay={0.1}
+          stagger={0.15}
+          staggerTarget=":scope > div"
+          className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
+        >
+          {subscriptions.map((plan) => (
+            <Card
+              key={plan.name}
+              className={cn(
+                "relative flex flex-col",
+                plan.highlighted && "border-primary shadow-lg",
+              )}
+            >
+              {plan.highlighted && (
+                <Badge className="absolute -top-3 left-1/2 -translate-x-1/2">
+                  Most Popular
+                </Badge>
+              )}
+              <CardHeader className="text-center">
+                <CardTitle className="text-xl">{plan.name}</CardTitle>
+                <CardDescription>{plan.schedule}</CardDescription>
+                <p className="mt-2 text-xs text-muted-foreground">
+                  {plan.inclusions}
+                </p>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  {plan.washDays}
+                </p>
+              </CardHeader>
+              <CardContent className="flex-1 space-y-4">
+                <div className="rounded-lg border border-border/50 p-4">
+                  <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                    Hatch / Sedan
+                  </div>
+                  <div className="mt-1">
+                    <span className="text-3xl font-bold">
+                      {plan.hatchSedan.monthly}
+                    </span>
+                    <span className="text-sm text-muted-foreground">/mo</span>
+                  </div>
+                  <div className="mt-0.5 text-xs text-muted-foreground">
+                    {plan.hatchSedan.perWash}/wash
+                  </div>
+                </div>
+                <div className="rounded-lg border border-border/50 p-4">
+                  <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                    SUV / MUV
+                  </div>
+                  <div className="mt-1">
+                    <span className="text-3xl font-bold">
+                      {plan.suvMuv.monthly}
+                    </span>
+                    <span className="text-sm text-muted-foreground">/mo</span>
+                  </div>
+                  <div className="mt-0.5 text-xs text-muted-foreground">
+                    {plan.suvMuv.perWash}/wash
+                  </div>
+                </div>
+              </CardContent>
+              <CardFooter>
+                <Button
+                  className="w-full"
+                  variant={plan.highlighted ? "default" : "outline"}
+                  asChild
+                >
+                  <a href="/#contact">Subscribe</a>
+                </Button>
+              </CardFooter>
+            </Card>
+          ))}
+        </ScrollReveal>
 
         {/* Add-ons + On-Demand */}
-        <div className="mt-20 grid gap-8 grid-cols-1">
+        <ScrollReveal
+          direction="up"
+          stagger={0.2}
+          staggerTarget=":scope > div"
+          className="mt-20 grid gap-8 grid-cols-1"
+        >
           <AddonsSection addons={subscriberAddons} />
           <OnDemandSection onDemand={onDemand} />
-        </div>
+        </ScrollReveal>
       </div>
     </section>
   );

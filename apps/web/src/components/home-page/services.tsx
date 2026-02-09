@@ -6,6 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { ScrollReveal } from "@/components/animations/scroll-reveal";
 import type { SiteConfig } from "@/config/site";
 
 const iconMap = {
@@ -21,16 +22,23 @@ export function Services({ services }: { services: readonly Service[] }) {
   return (
     <section id="services" className="py-20 sm:py-28">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="text-center">
-          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
-            Our Services
-          </h2>
-          <p className="mt-4 text-lg text-muted-foreground">
-            Professional care for every type of vehicle
-          </p>
-        </div>
+        <ScrollReveal direction="up">
+          <div className="text-center">
+            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
+              Our Services
+            </h2>
+            <p className="mt-4 text-lg text-muted-foreground">
+              Professional care for every type of vehicle
+            </p>
+          </div>
+        </ScrollReveal>
 
-        <div className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <ScrollReveal
+          direction="up"
+          stagger={0.12}
+          staggerTarget=":scope > div"
+          className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-4"
+        >
           {services.map((service) => {
             const Icon = iconMap[service.icon as keyof typeof iconMap];
             return (
@@ -56,7 +64,7 @@ export function Services({ services }: { services: readonly Service[] }) {
               </Card>
             );
           })}
-        </div>
+        </ScrollReveal>
       </div>
     </section>
   );
