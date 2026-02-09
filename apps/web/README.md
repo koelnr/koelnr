@@ -1,75 +1,87 @@
-# React + TypeScript + Vite
+# koelnr web
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Doorstep car wash service landing page — React 19 SPA built with Vite, TypeScript, and Tailwind CSS v4.
 
-Currently, two official plugins are available:
+## Tech Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **React 19** with React Compiler (auto-memoization via babel-plugin-react-compiler)
+- **Vite 7** for dev server and bundling
+- **TypeScript** in strict mode
+- **Tailwind CSS v4** with oklch color theme and CSS variables
+- **shadcn/ui** (new-york style) for UI primitives
+- **GSAP** for scroll-driven animations (ScrollTrigger + ScrollSmoother)
+- **React Router v7** for client-side routing
+- **Firebase** for analytics
+- **Lucide React** for icons
 
-## React Compiler
+## Project Structure
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
-
-Note: This will impact Vite dev & build performances.
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```
+src/
+├── assets/                  # SVG components (logo, etc.)
+├── components/
+│   ├── animations/
+│   │   ├── scroll-reveal.tsx    # GSAP scroll entrance animations
+│   │   └── smooth-scroll.tsx    # GSAP smooth scrolling wrapper
+│   ├── ui/                      # shadcn/ui primitives (button, card, badge, separator)
+│   ├── navbar.tsx               # Fixed header with responsive mobile menu
+│   └── footer.tsx               # Site footer with links and contact info
+├── config/
+│   └── site.ts              # Centralized site content and configuration
+├── lib/
+│   ├── firebase.ts          # Firebase initialization
+│   └── utils.ts             # cn() helper, placeholder utilities
+├── routes/
+│   ├── router.ts            # React Router route definitions
+│   ├── index.tsx            # Root layout (navbar + smooth scroll + footer)
+│   └── home/
+│       ├── index.tsx        # Home page — composes all sections
+│       └── components/
+│           ├── hero.tsx         # Hero banner with CTAs
+│           ├── services.tsx     # Service cards grid
+│           ├── pricing.tsx      # Subscription plans, add-ons, on-demand pricing
+│           ├── about.tsx        # About section with stats
+│           ├── testimonials.tsx # Customer reviews grid
+│           └── contact.tsx      # Contact form and info cards
+├── main.tsx                 # App entry point
+└── index.css                # Tailwind theme (oklch colors, dark mode, fonts)
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Key Architecture Decisions
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+**Config-driven content** — All site copy, pricing, nav items, and testimonials live in `src/config/site.ts`. Components consume this config via props and derive their TypeScript types from it.
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+**Route-based organization** — Page components and their sections are grouped under `src/routes/<page>/`. Shared components live in `src/components/`.
+
+**Animation system** — `ScrollReveal` provides entrance animations on scroll/mount with configurable direction, delay, and stagger. `SmoothScroll` wraps the entire page for smooth scrolling behavior. Both use GSAP.
+
+**shadcn/ui components** — Added via CLI (`bunx --bun shadcn@latest add <component>`), stored in `src/components/ui/`. These use CVA for variant management and the `cn()` utility for class merging.
+
+## Development
+
+```bash
+# from monorepo root
+bun install
+bun run --cwd apps/web dev
+```
+
+## Build
+
+```bash
+bun run --cwd apps/web build    # tsc -b && vite build
+bun run --cwd apps/web preview  # preview production build locally
+```
+
+## Environment Variables
+
+Firebase config via `.env.local`:
+
+```
+VITE_FIREBASE_API_KEY
+VITE_FIREBASE_AUTH_DOMAIN
+VITE_FIREBASE_PROJECT_ID
+VITE_FIREBASE_STORAGE_BUCKET
+VITE_FIREBASE_MESSAGING_SENDER_ID
+VITE_FIREBASE_APP_ID
+VITE_FIREBASE_MEASUREMENT_ID
 ```
