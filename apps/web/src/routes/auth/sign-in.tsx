@@ -1,5 +1,5 @@
 import { useState, type SubmitEvent } from "react";
-import { Link, useNavigate } from "react-router";
+import { Link, useNavigate, useLocation } from "react-router";
 import { FirebaseError } from "firebase/app";
 import { useAuthStore } from "@/stores/auth-store";
 import { Button } from "@/components/ui/button";
@@ -21,6 +21,8 @@ export function SignIn() {
   const signIn = useAuthStore((s) => s.signIn);
   const signInWithGoogle = useAuthStore((s) => s.signInWithGoogle);
   const navigate = useNavigate();
+  const location = useLocation();
+  const from = (location.state as { from?: string })?.from || "/";
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -32,7 +34,7 @@ export function SignIn() {
     setLoading(true);
     try {
       await signIn(email, password);
-      navigate("/");
+      navigate(from, { replace: true });
     } catch (err) {
       if (err instanceof FirebaseError) {
         setError(getFirebaseError(err.code));
@@ -49,7 +51,7 @@ export function SignIn() {
     setLoading(true);
     try {
       await signInWithGoogle();
-      navigate("/");
+      navigate(from, { replace: true });
     } catch (err) {
       if (err instanceof FirebaseError) {
         setError(getFirebaseError(err.code));
