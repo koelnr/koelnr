@@ -1,21 +1,17 @@
 import Razorpay from "razorpay";
-import { defineString } from "firebase-functions/params";
-
-const razorpayKeyId = defineString("RAZORPAY_KEY_ID");
-const razorpayKeySecret = defineString("RAZORPAY_KEY_SECRET");
 
 let instance: InstanceType<typeof Razorpay> | null = null;
 
 export function getRazorpay(): InstanceType<typeof Razorpay> {
   if (!instance) {
     instance = new Razorpay({
-      key_id: razorpayKeyId.value(),
-      key_secret: razorpayKeySecret.value(),
+      key_id: process.env.RAZORPAY_KEY_ID!,
+      key_secret: process.env.RAZORPAY_KEY_SECRET!,
     });
   }
   return instance;
 }
 
 export function getRazorpayKeySecret(): string {
-  return razorpayKeySecret.value();
+  return process.env.RAZORPAY_KEY_SECRET!;
 }
