@@ -3,6 +3,7 @@ import { RootLayout } from ".";
 import { Home } from "./home";
 import { SignIn } from "./auth/sign-in";
 import { SignUp } from "./auth/sign-up";
+import { ForgotPassword } from "./auth/forgot-password";
 import { ProtectedRoute } from "@/components/protected-route";
 
 export const router = createBrowserRouter([
@@ -21,4 +22,5 @@ export const router = createBrowserRouter([
   },
   { path: "/sign-in", Component: SignIn },
   { path: "/sign-up", Component: SignUp },
+  { path: "/forgot-password", Component: ForgotPassword },
 ]);
