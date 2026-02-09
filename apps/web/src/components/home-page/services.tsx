@@ -1,4 +1,4 @@
-import { Droplets, SprayCan, Sparkles, Zap } from "lucide-react";
+import { Droplets, Waves, SprayCan, Sparkles } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -10,9 +10,9 @@ import type { SiteConfig } from "@/config/site";
 
 const iconMap = {
   Droplets,
+  Waves,
   SprayCan,
   Sparkles,
-  Zap,
 } as const;
 
 type Service = SiteConfig["services"][number];

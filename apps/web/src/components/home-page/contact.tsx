@@ -13,8 +13,7 @@ export function Contact({ config }: { config: SiteConfig }) {
               Get in Touch
             </h2>
             <p className="mt-4 text-lg text-muted-foreground">
-              Ready to give your car the treatment it deserves? Reach out or
-              stop by.
+              Ready to get started? Reach out and we'll set you up.
             </p>
 
             <div className="mt-10 space-y-6">
@@ -23,7 +22,7 @@ export function Contact({ config }: { config: SiteConfig }) {
                   <MapPin className="size-5 text-primary" />
                 </div>
                 <div>
-                  <div className="font-medium">Address</div>
+                  <div className="font-medium">Service Area</div>
                   <div className="text-sm text-muted-foreground">
                     {config.address}
                   </div>
@@ -59,11 +58,16 @@ export function Contact({ config }: { config: SiteConfig }) {
                   <Clock className="size-5 text-primary" />
                 </div>
                 <div>
-                  <div className="font-medium">Hours</div>
-                  <div className="text-sm text-muted-foreground">
-                    <div>Mon – Fri: {config.hours.weekdays}</div>
-                    <div>Saturday: {config.hours.saturday}</div>
-                    <div>Sunday: {config.hours.sunday}</div>
+                  <div className="font-medium">Service Slots</div>
+                  <div className="text-sm text-muted-foreground space-y-1">
+                    <div>
+                      <span className="font-medium text-foreground">Morning:</span>{" "}
+                      {config.serviceSlots.morning.join(", ")}
+                    </div>
+                    <div>
+                      <span className="font-medium text-foreground">Evening:</span>{" "}
+                      {config.serviceSlots.evening.join(", ")}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -108,34 +112,37 @@ export function Contact({ config }: { config: SiteConfig }) {
                 </div>
                 <div>
                   <label
-                    htmlFor="email"
-                    className="mb-2 block text-sm font-medium"
-                  >
-                    Email
-                  </label>
-                  <input
-                    id="email"
-                    type="email"
-                    placeholder="you@example.com"
-                    className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-                  />
-                </div>
-                <div>
-                  <label
                     htmlFor="service"
                     className="mb-2 block text-sm font-medium"
                   >
-                    Service
+                    Interested In
                   </label>
                   <select
                     id="service"
                     className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
                   >
-                    <option value="">Select a service</option>
-                    <option value="express">Express Wash</option>
-                    <option value="exterior">Exterior Wash</option>
-                    <option value="interior">Interior Cleaning</option>
-                    <option value="detailing">Full Detailing</option>
+                    <option value="">Select an option</option>
+                    <option value="smart-3d">Smart 3D Subscription</option>
+                    <option value="pro-6d">Pro 6D Subscription</option>
+                    <option value="elite-6d">Elite 6D Subscription</option>
+                    <option value="on-demand">On-Demand Wash</option>
+                    <option value="deep-interior">Deep Interior</option>
+                  </select>
+                </div>
+                <div>
+                  <label
+                    htmlFor="vehicle"
+                    className="mb-2 block text-sm font-medium"
+                  >
+                    Vehicle Type
+                  </label>
+                  <select
+                    id="vehicle"
+                    className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                  >
+                    <option value="">Select vehicle type</option>
+                    <option value="hatch-sedan">Hatchback / Sedan</option>
+                    <option value="suv-muv">SUV / MUV</option>
                   </select>
                 </div>
                 <div>
@@ -148,7 +155,7 @@ export function Contact({ config }: { config: SiteConfig }) {
                   <textarea
                     id="message"
                     rows={4}
-                    placeholder="Any special requests?"
+                    placeholder="Your address, preferred slot, or any questions"
                     className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
                   />
                 </div>

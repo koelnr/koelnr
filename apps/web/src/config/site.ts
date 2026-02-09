@@ -6,16 +6,15 @@ function img(w: number, h: number, bg = "0a0a0a", fg = "fafafa") {
 
 export const siteConfig = {
   name: "Koelnr",
-  tagline: "Premium Car Wash & Detailing",
+  tagline: "Doorstep Car Care, Done Right",
   description:
-    "Professional car wash services in Cologne. From quick exterior washes to full detailing — we make your car shine like new.",
-  phone: "+49 221 123 4567",
-  email: "info@koelnr.de",
-  address: "Hohenzollernring 42, 50672 Köln",
-  hours: {
-    weekdays: "08:00 – 20:00",
-    saturday: "09:00 – 18:00",
-    sunday: "Closed",
+    "Professional doorstep car wash services in Ludhiana. Subscriptions for daily care, on-demand washes when you need them.",
+  phone: "+91 98765 43210",
+  email: "hello@koelnr.in",
+  address: "Ludhiana, Punjab, India",
+  serviceSlots: {
+    morning: ["6:00 – 8:00 AM", "8:00 – 10:00 AM", "10:00 – 11:30 AM"],
+    evening: ["4:00 – 6:00 PM", "6:00 – 8:00 PM"],
   },
   nav: [
     { label: "Home", href: "/" },
@@ -25,109 +24,128 @@ export const siteConfig = {
     { label: "Contact", href: "/#contact" },
   ],
   hero: {
-    headline: "Your Car Deserves the Best Care",
+    headline: "Your Car, Washed at Your Doorstep",
     subheadline:
-      "Premium hand wash & detailing in the heart of Cologne. Drive in dirty, drive out stunning.",
-    cta: { label: "Book Now", href: "/#contact" },
+      "Subscribe for daily care or book on-demand — premium car wash delivered to your parking spot in Ludhiana.",
+    cta: { label: "Subscribe Now", href: "/#pricing" },
     ctaSecondary: { label: "View Services", href: "/#services" },
     image: img(1400, 600, "1a1a2e", "e0e0e0"),
   },
   services: [
     {
-      title: "Exterior Wash",
+      title: "Basic Wash",
       description:
-        "Thorough hand wash, wheel cleaning, and tire dressing for a spotless finish.",
+        "Low-water / waterless exterior clean, glass wipe, light shine, and tyre face wipe. 15–20 min, 1-person crew.",
       icon: "Droplets",
       image: img(600, 400, "1e3a5f", "a0c4e8"),
     },
     {
-      title: "Interior Cleaning",
+      title: "Pressure Wash",
       description:
-        "Deep vacuum, dashboard polish, leather conditioning, and odor removal.",
-      icon: "SprayCan",
+        "Foam + pressure rinse, full drying, tyre and rim scrub. 25–35 min, 2-person crew.",
+      icon: "Waves",
       image: img(600, 400, "2d4a22", "b5d6a7"),
     },
     {
-      title: "Full Detailing",
+      title: "Interior Refresh",
       description:
-        "Complete interior & exterior restoration including paint correction and ceramic coating.",
-      icon: "Sparkles",
+        "Vacuum, dashboard & panel wipe, mats shake, and air freshener. 15–20 min, 2-person crew.",
+      icon: "SprayCan",
       image: img(600, 400, "4a1942", "d4a0cc"),
     },
     {
-      title: "Express Wash",
+      title: "Deep Interior",
       description:
-        "Quick 15-minute exterior wash for when you're on the go. No appointment needed.",
-      icon: "Zap",
+        "Full shampoo and extraction as needed — condition and size dependent. 60–120 min, 2-person crew.",
+      icon: "Sparkles",
       image: img(600, 400, "3d2b1f", "d4b896"),
     },
   ],
-  pricing: [
+  subscriptions: [
     {
-      name: "Express",
-      price: "€19",
-      description: "Quick exterior refresh",
-      features: [
-        "Exterior hand wash",
-        "Wheel rinse",
-        "Window cleaning",
-        "Air dry",
-      ],
+      name: "Smart 3D",
+      schedule: "3 days/week",
+      inclusions:
+        "3 wash-days + 1 Pressure Wash upgrade per week",
+      washDays: "~13/month",
+      hatchSedan: { perWash: "₹193", monthly: "₹2,499" },
+      suvMuv: { perWash: "₹223", monthly: "₹2,899" },
       highlighted: false,
     },
     {
-      name: "Premium",
-      price: "€49",
-      description: "Our most popular package",
-      features: [
-        "Full exterior hand wash",
-        "Interior vacuum",
-        "Dashboard wipe",
-        "Tire dressing",
-        "Air freshener",
-      ],
+      name: "Pro 6D",
+      schedule: "Mon–Sat (Sun off)",
+      inclusions:
+        "6 wash-days + 3 Pressure Wash upgrades per week",
+      washDays: "~26/month",
+      hatchSedan: { perWash: "₹193", monthly: "₹4,999" },
+      suvMuv: { perWash: "₹219", monthly: "₹5,699" },
       highlighted: true,
     },
     {
-      name: "Detailing",
-      price: "€129",
-      description: "Complete restoration",
-      features: [
-        "Everything in Premium",
-        "Paint correction",
-        "Leather conditioning",
-        "Engine bay cleaning",
-        "Ceramic spray coating",
-      ],
+      name: "Elite 6D",
+      schedule: "Mon–Sat (Sun off)",
+      inclusions:
+        "6 wash-days + 3 Pressure Wash upgrades + 3 Interior Refresh per week",
+      washDays: "~26/month",
+      hatchSedan: { perWash: "₹269", monthly: "₹6,999" },
+      suvMuv: { perWash: "₹308", monthly: "₹7,999" },
       highlighted: false,
     },
   ],
+  subscriberAddons: [
+    { name: "Extra Pressure Wash", hatchSedan: "₹399", suvMuv: "₹449" },
+    { name: "Extra Interior Refresh", hatchSedan: "₹249", suvMuv: "₹299" },
+    { name: "Deep Interior", hatchSedan: "₹1,199+", suvMuv: "₹1,199+" },
+    { name: "Tyre Dressing / Polish Finish", hatchSedan: "₹199–₹399", suvMuv: "₹199–₹399" },
+  ],
+  onDemand: {
+    exterior: [
+      { name: "Basic Exterior (low-water)", hatchSedan: "₹299", suvMuv: "₹349" },
+      { name: "Foam Exterior", hatchSedan: "₹399", suvMuv: "₹449" },
+      { name: "Pressure Wash + Dry", hatchSedan: "₹549", suvMuv: "₹649" },
+    ],
+    interior: [
+      { name: "Interior Refresh", hatchSedan: "₹249", suvMuv: "₹299" },
+      { name: "Deep Interior", hatchSedan: "₹1,199+", suvMuv: "₹1,399+" },
+    ],
+    combos: [
+      { name: "Foam + Interior Refresh", hatchSedan: "₹599", suvMuv: "₹699" },
+      { name: "Pressure + Interior Refresh", hatchSedan: "₹749", suvMuv: "₹899" },
+    ],
+  },
+  policies: [
+    "Water and power must be provided by the customer.",
+    "Heavy mud / extreme dirt requires a Pressure Wash (or paid upgrade) — Basic Wash covers dust and light dirt only.",
+    "Quality issues reported on the same day qualify for a free redo.",
+    "Subscription customers pick a primary slot; reschedules are subject to capacity.",
+  ],
   about: {
-    headline: "Cologne's Trusted Car Care Since 2018",
+    headline: "Doorstep Car Care, Built for Ludhiana",
     description:
-      "At Koelnr, we believe every car tells a story — and it should look its best while doing it. Our team of certified detailing professionals uses only eco-friendly products and proven techniques to deliver results that speak for themselves.",
+      "Koelnr is a doorstep services business launching with car washing and expanding into adjacent service categories. We bring professional car care to your parking spot — no driving, no waiting. Subscribe for daily maintenance or book on-demand whenever you need a deep clean.",
     stats: [
-      { value: "15K+", label: "Cars Washed" },
-      { value: "4.9", label: "Google Rating" },
-      { value: "7+", label: "Years Experience" },
-      { value: "100%", label: "Eco-Friendly" },
+      { value: "5", label: "Service Slots Daily" },
+      { value: "3", label: "Subscription Plans" },
+      { value: "100%", label: "Doorstep Service" },
+      { value: "2-Person", label: "Trained Crews" },
     ],
     image: img(800, 500, "1a1a2e", "c0c0c0"),
   },
   testimonials: [
     {
-      name: "Marco S.",
-      text: "Best car wash in Cologne, hands down. My BMW has never looked this good.",
+      name: "Rajveer S.",
+      text: "Haven't visited a car wash in months. Koelnr shows up every morning and my car is spotless before I leave for work.",
       rating: 5,
     },
     {
-      name: "Anna K.",
-      text: "The detailing service is incredible. They treated my car like it was their own.",
+      name: "Priya M.",
+      text: "The subscription is so worth it. Pressure wash upgrades keep my SUV looking showroom-ready.",
       rating: 5,
     },
     {
-      name: "Thomas R.",
-      text: "Quick, affordable, and thorough. I come here every two weeks.",
+      name: "Arjun K.",
+      text: "Booked a deep interior on-demand — the crew was on time, thorough, and super professional.",
       rating: 5,
     },
   ],
@@ -135,7 +153,7 @@ export const siteConfig = {
     copyright: `© ${new Date().getFullYear()} Koelnr. All rights reserved.`,
     socials: [
       { label: "Instagram", href: "#" },
-      { label: "Facebook", href: "#" },
+      { label: "WhatsApp", href: "#" },
       { label: "Google Maps", href: "#" },
     ],
   },
