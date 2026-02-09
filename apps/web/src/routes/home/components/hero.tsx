@@ -1,3 +1,4 @@
+import { Link } from "react-router";
 import { Button } from "@/components/ui/button";
 import { ScrollReveal } from "@/components/animations/scroll-reveal";
 import type { SiteConfig } from "@/config/site";
@@ -41,7 +42,7 @@ export function Hero({ config }: { config: HeroConfig }) {
           >
             <div className="mt-10 flex flex-wrap gap-4">
               <Button size="lg" asChild>
-                <a href={config.cta.href}>{config.cta.label}</a>
+                <Link to={config.cta.href}>{config.cta.label}</Link>
               </Button>
               <Button size="lg" variant="outline" asChild>
                 <a href={config.ctaSecondary.href}>

@@ -21,7 +21,7 @@ export const siteConfig = {
     headline: "Your Car, Washed at Your Doorstep",
     subheadline:
       "Subscribe for daily care or book on-demand — premium car wash delivered to your parking spot in Ludhiana.",
-    cta: { label: "Subscribe Now", href: "/#pricing" },
+    cta: { label: "Subscribe Now", href: "/dashboard/plans" },
     ctaSecondary: { label: "View Services", href: "/#services" },
     image: "/images/car-wash-hero.webp",
   },

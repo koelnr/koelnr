@@ -2,6 +2,7 @@ import { Outlet } from "react-router";
 import { SmoothScroll } from "@/components/animations/smooth-scroll";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
+import { Toaster } from "@/components/ui/sonner";
 import { siteConfig } from "@/config/site";
 
 export const RootLayout = () => {
@@ -12,6 +13,7 @@ export const RootLayout = () => {
         <Outlet />
         <Footer config={siteConfig} />
       </SmoothScroll>
+      <Toaster />
     </div>
   );
 };

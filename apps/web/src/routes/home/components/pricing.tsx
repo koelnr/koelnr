@@ -1,3 +1,4 @@
+import { Link } from "react-router";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -197,7 +198,7 @@ export function Pricing({
                   variant={plan.highlighted ? "default" : "outline"}
                   asChild
                 >
-                  <a href="/#contact">Subscribe</a>
+                  <Link to="/dashboard/plans">Subscribe</Link>
                 </Button>
               </CardFooter>
             </Card>
