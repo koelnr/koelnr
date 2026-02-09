@@ -15,11 +15,7 @@ type Subscription = SiteConfig["subscriptions"][number];
 type OnDemand = SiteConfig["onDemand"];
 type Addon = SiteConfig["subscriberAddons"][number];
 
-function SubscriptionCards({
-  plans,
-}: {
-  plans: readonly Subscription[];
-}) {
+function SubscriptionCards({ plans }: { plans: readonly Subscription[] }) {
   return (
     <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
       {plans.map((plan) => (
@@ -27,7 +23,7 @@ function SubscriptionCards({
           key={plan.name}
           className={cn(
             "relative flex flex-col",
-            plan.highlighted && "border-primary shadow-lg"
+            plan.highlighted && "border-primary shadow-lg",
           )}
         >
           {plan.highlighted && (
@@ -90,7 +86,15 @@ function SubscriptionCards({
   );
 }
 
-function PriceRow({ name, hatchSedan, suvMuv }: { name: string; hatchSedan: string; suvMuv: string }) {
+function PriceRow({
+  name,
+  hatchSedan,
+  suvMuv,
+}: {
+  name: string;
+  hatchSedan: string;
+  suvMuv: string;
+}) {
   return (
     <div className="grid grid-cols-3 items-center gap-4 py-3 border-b border-border/30 last:border-0">
       <div className="text-sm">{name}</div>
@@ -111,7 +115,9 @@ function OnDemandSection({ onDemand }: { onDemand: OnDemand }) {
     <Card className="border-border/50">
       <CardHeader>
         <CardTitle className="text-lg">On-Demand Pricing</CardTitle>
-        <CardDescription>Individual service pricing — no subscription required</CardDescription>
+        <CardDescription>
+          Individual service pricing — no subscription required
+        </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         {categories.map((cat) => (
@@ -119,11 +125,20 @@ function OnDemandSection({ onDemand }: { onDemand: OnDemand }) {
             <h4 className="text-sm font-semibold mb-2">{cat.label}</h4>
             <div className="grid grid-cols-3 items-center gap-4 pb-2 border-b border-border/50">
               <div className="text-xs text-muted-foreground">Service</div>
-              <div className="text-xs text-muted-foreground text-center">Hatch/Sedan</div>
-              <div className="text-xs text-muted-foreground text-center">SUV/MUV</div>
+              <div className="text-xs text-muted-foreground text-center">
+                Hatch/Sedan
+              </div>
+              <div className="text-xs text-muted-foreground text-center">
+                SUV/MUV
+              </div>
             </div>
             {cat.items.map((item) => (
-              <PriceRow key={item.name} name={item.name} hatchSedan={item.hatchSedan} suvMuv={item.suvMuv} />
+              <PriceRow
+                key={item.name}
+                name={item.name}
+                hatchSedan={item.hatchSedan}
+                suvMuv={item.suvMuv}
+              />
             ))}
           </div>
         ))}
@@ -137,16 +152,27 @@ function AddonsSection({ addons }: { addons: readonly Addon[] }) {
     <Card className="border-border/50">
       <CardHeader>
         <CardTitle className="text-lg">Subscriber Add-ons</CardTitle>
-        <CardDescription>Extra services available to active subscribers</CardDescription>
+        <CardDescription>
+          Extra services available to active subscribers
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-3 items-center gap-4 pb-2 border-b border-border/50">
           <div className="text-xs text-muted-foreground">Add-on</div>
-          <div className="text-xs text-muted-foreground text-center">Hatch/Sedan</div>
-          <div className="text-xs text-muted-foreground text-center">SUV/MUV</div>
+          <div className="text-xs text-muted-foreground text-center">
+            Hatch/Sedan
+          </div>
+          <div className="text-xs text-muted-foreground text-center">
+            SUV/MUV
+          </div>
         </div>
         {addons.map((addon) => (
-          <PriceRow key={addon.name} name={addon.name} hatchSedan={addon.hatchSedan} suvMuv={addon.suvMuv} />
+          <PriceRow
+            key={addon.name}
+            name={addon.name}
+            hatchSedan={addon.hatchSedan}
+            suvMuv={addon.suvMuv}
+          />
         ))}
       </CardContent>
     </Card>
@@ -179,7 +205,7 @@ export function Pricing({
         </div>
 
         {/* Add-ons + On-Demand */}
-        <div className="mt-20 grid gap-8 lg:grid-cols-2">
+        <div className="mt-20 grid gap-8 grid-cols-1">
           <AddonsSection addons={subscriberAddons} />
           <OnDemandSection onDemand={onDemand} />
         </div>
