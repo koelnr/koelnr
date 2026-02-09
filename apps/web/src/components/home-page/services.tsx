@@ -36,9 +36,9 @@ export function Services({ services }: { services: readonly Service[] }) {
             return (
               <Card
                 key={service.title}
-                className="group overflow-hidden border-border/50 transition-colors hover:border-border"
+                className="pt-0 group overflow-hidden border-border/50 transition-colors hover:border-border"
               >
-                <div className="aspect-[3/2] overflow-hidden">
+                <div className="aspect-3/2 overflow-hidden">
                   <img
                     src={service.image}
                     alt={service.title}
