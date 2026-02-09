@@ -43,7 +43,7 @@ export function About({ config }: { config: AboutConfig }) {
               <img
                 src={config.image}
                 alt="About Koelnr"
-                className="h-full w-full object-cover"
+                className="h-full max-h-[50vh] w-full object-cover"
               />
             </div>
           </ScrollReveal>

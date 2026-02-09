@@ -1,9 +1,3 @@
-const PLACEHOLDER_BASE = "https://placehold.harshsandhu.com/api/img";
-
-function img(w: number, h: number, bg = "0a0a0a", fg = "fafafa") {
-  return `${PLACEHOLDER_BASE}?w=${w}&h=${h}&bg=${bg}&fg=${fg}`;
-}
-
 export const siteConfig = {
   name: "koelnr",
   tagline: "Doorstep Car Care, Done Right",
@@ -29,7 +23,7 @@ export const siteConfig = {
       "Subscribe for daily care or book on-demand — premium car wash delivered to your parking spot in Ludhiana.",
     cta: { label: "Subscribe Now", href: "/#pricing" },
     ctaSecondary: { label: "View Services", href: "/#services" },
-    image: img(1400, 600, "1a1a2e", "e0e0e0"),
+    image: "/images/car-wash-hero.webp",
   },
   services: [
     {
@@ -37,28 +31,28 @@ export const siteConfig = {
       description:
         "Low-water / waterless exterior clean, glass wipe, light shine, and tyre face wipe. 15–20 min, 1-person crew.",
       icon: "Droplets",
-      image: img(600, 400, "1e3a5f", "a0c4e8"),
+      image: "/images/basic-clean.webp",
     },
     {
       title: "Pressure Wash",
       description:
         "Foam + pressure rinse, full drying, tyre and rim scrub. 25–35 min, 2-person crew.",
       icon: "Waves",
-      image: img(600, 400, "2d4a22", "b5d6a7"),
+      image: "/images/pressure-washing.webp",
     },
     {
       title: "Interior Refresh",
       description:
         "Vacuum, dashboard & panel wipe, mats shake, and air freshener. 15–20 min, 2-person crew.",
       icon: "SprayCan",
-      image: img(600, 400, "4a1942", "d4a0cc"),
+      image: "/images/interior-1.webp",
     },
     {
       title: "Deep Interior",
       description:
         "Full shampoo and extraction as needed — condition and size dependent. 60–120 min, 2-person crew.",
       icon: "Sparkles",
-      image: img(600, 400, "3d2b1f", "d4b896"),
+      image: "/images/interior-2.webp",
     },
   ],
   subscriptions: [
@@ -140,7 +134,7 @@ export const siteConfig = {
       { value: "100%", label: "Doorstep Service" },
       { value: "2-Person", label: "Trained Crews" },
     ],
-    image: img(800, 500, "1a1a2e", "c0c0c0"),
+    image: "/images/car-wash-hero.webp",
   },
   testimonials: [
     {
