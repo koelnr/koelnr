@@ -8,9 +8,13 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useUserProfileStore } from "@/stores/user-profile-store";
+import { useSubscriptionStore } from "@/stores/subscription-store";
+import { useOrderStore } from "@/stores/order-store";
 import { getSubscriptionPrice, formatPrice } from "@/lib/pricing";
+import { initiatePayment } from "@/lib/razorpay";
 import { SlotPicker } from "./slot-picker";
 import { useState } from "react";
+import { toast } from "sonner";
 import type { VehicleType } from "@/types";
 
 type CheckoutDialogProps = {
@@ -43,8 +47,13 @@ export function CheckoutDialog({
   planName,
   serviceName,
   servicePrice,
+  userId,
+  userEmail,
+  userName,
 }: CheckoutDialogProps) {
   const vehicleType = useUserProfileStore((s) => s.vehicleType);
+  const fetchSubscription = useSubscriptionStore((s) => s.fetchSubscription);
+  const fetchOrders = useOrderStore((s) => s.fetchOrders);
   const [selectedSlot, setSelectedSlot] = useState<string>("");
   const [selectedDate, setSelectedDate] = useState<string>("");
   const [loading, setLoading] = useState(false);
@@ -57,16 +66,39 @@ export function CheckoutDialog({
 
   const handlePurchase = async () => {
     setLoading(true);
-    // Razorpay integration will be added in Phase 5
-    // For now, show that the flow works
     try {
-      // TODO: Call cloud function to create Razorpay order
-      // TODO: Open Razorpay checkout modal
-      // TODO: Verify payment on success
-      alert(
-        `Payment flow coming soon!\n\n${displayName}\nAmount: ${formatPrice(amount)}\n${!isSubscription && selectedSlot ? `Slot: ${selectedSlot}` : ""}`,
-      );
-      onOpenChange(false);
+      const items = [{ name: displayName!, price: amount, quantity: 1 }];
+
+      const result = await initiatePayment({
+        type,
+        planName: isSubscription ? planName : undefined,
+        serviceName: !isSubscription ? serviceName : undefined,
+        items,
+        totalAmount: amount,
+        vehicleType,
+        scheduledSlot: !isSubscription ? selectedSlot : undefined,
+        scheduledDate: !isSubscription ? selectedDate : undefined,
+        userName,
+        userEmail,
+      });
+
+      if (result.success) {
+        toast.success("Payment successful!", {
+          description: isSubscription
+            ? `Subscribed to ${planName}`
+            : `Booked ${serviceName}`,
+        });
+        // Refresh stores
+        fetchSubscription(userId);
+        fetchOrders(userId);
+        onOpenChange(false);
+      } else {
+        toast.info("Payment cancelled");
+      }
+    } catch {
+      toast.error("Payment failed", {
+        description: "Something went wrong. Please try again.",
+      });
     } finally {
       setLoading(false);
     }
