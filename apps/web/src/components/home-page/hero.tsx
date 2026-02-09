@@ -13,7 +13,7 @@ export function Hero({ config }: { config: HeroConfig }) {
           alt="Car wash hero"
           className="h-full w-full object-cover opacity-20"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-background/60 to-background" />
+        <div className="absolute inset-0 bg-linear-to-b from-background/60 to-background" />
       </div>
 
       <div className="relative mx-auto max-w-7xl px-4 py-24 sm:px-6 sm:py-32 lg:px-8 lg:py-40">
@@ -23,12 +23,22 @@ export function Hero({ config }: { config: HeroConfig }) {
               {config.headline}
             </h1>
           </ScrollReveal>
-          <ScrollReveal direction="up" scroll={false} delay={0.15} duration={0.8}>
+          <ScrollReveal
+            direction="up"
+            scroll={false}
+            delay={0.15}
+            duration={0.8}
+          >
             <p className="mt-6 text-lg leading-relaxed text-muted-foreground sm:text-xl">
               {config.subheadline}
             </p>
           </ScrollReveal>
-          <ScrollReveal direction="up" scroll={false} delay={0.3} duration={0.8}>
+          <ScrollReveal
+            direction="up"
+            scroll={false}
+            delay={0.3}
+            duration={0.8}
+          >
             <div className="mt-10 flex flex-wrap gap-4">
               <Button size="lg" asChild>
                 <a href={config.cta.href}>{config.cta.label}</a>
