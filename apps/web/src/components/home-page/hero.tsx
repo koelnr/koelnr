@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { ScrollReveal } from "@/components/animations/scroll-reveal";
 import type { SiteConfig } from "@/config/site";
 
 type HeroConfig = SiteConfig["hero"];
@@ -17,22 +18,28 @@ export function Hero({ config }: { config: HeroConfig }) {
 
       <div className="relative mx-auto max-w-7xl px-4 py-24 sm:px-6 sm:py-32 lg:px-8 lg:py-40">
         <div className="max-w-2xl">
-          <h1 className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
-            {config.headline}
-          </h1>
-          <p className="mt-6 text-lg leading-relaxed text-muted-foreground sm:text-xl">
-            {config.subheadline}
-          </p>
-          <div className="mt-10 flex flex-wrap gap-4">
-            <Button size="lg" asChild>
-              <a href={config.cta.href}>{config.cta.label}</a>
-            </Button>
-            <Button size="lg" variant="outline" asChild>
-              <a href={config.ctaSecondary.href}>
-                {config.ctaSecondary.label}
-              </a>
-            </Button>
-          </div>
+          <ScrollReveal direction="up" scroll={false} duration={0.8}>
+            <h1 className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
+              {config.headline}
+            </h1>
+          </ScrollReveal>
+          <ScrollReveal direction="up" scroll={false} delay={0.15} duration={0.8}>
+            <p className="mt-6 text-lg leading-relaxed text-muted-foreground sm:text-xl">
+              {config.subheadline}
+            </p>
+          </ScrollReveal>
+          <ScrollReveal direction="up" scroll={false} delay={0.3} duration={0.8}>
+            <div className="mt-10 flex flex-wrap gap-4">
+              <Button size="lg" asChild>
+                <a href={config.cta.href}>{config.cta.label}</a>
+              </Button>
+              <Button size="lg" variant="outline" asChild>
+                <a href={config.ctaSecondary.href}>
+                  {config.ctaSecondary.label}
+                </a>
+              </Button>
+            </div>
+          </ScrollReveal>
         </div>
       </div>
     </section>
