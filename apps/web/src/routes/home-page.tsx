@@ -7,24 +7,27 @@ import { Testimonials } from "@/components/home-page/testimonials";
 import { Contact } from "@/components/home-page/contact";
 import { Navbar } from "@/components/home-page/navbar";
 import { Footer } from "@/components/home-page/footer";
+import { SmoothScroll } from "@/components/animations/smooth-scroll";
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <Navbar config={siteConfig} />
-      <main>
-        <Hero config={siteConfig.hero} />
-        <Services services={siteConfig.services} />
-        <Pricing
-          subscriptions={siteConfig.subscriptions}
-          subscriberAddons={siteConfig.subscriberAddons}
-          onDemand={siteConfig.onDemand}
-        />
-        <About config={siteConfig.about} />
-        <Testimonials testimonials={siteConfig.testimonials} />
-        <Contact config={siteConfig} />
-      </main>
-      <Footer config={siteConfig} />
-    </div>
+    <SmoothScroll>
+      <div className="min-h-screen bg-background text-foreground">
+        <Navbar config={siteConfig} />
+        <main>
+          <Hero config={siteConfig.hero} />
+          <Services services={siteConfig.services} />
+          <Pricing
+            subscriptions={siteConfig.subscriptions}
+            subscriberAddons={siteConfig.subscriberAddons}
+            onDemand={siteConfig.onDemand}
+          />
+          <About config={siteConfig.about} />
+          <Testimonials testimonials={siteConfig.testimonials} />
+          <Contact config={siteConfig} />
+        </main>
+        <Footer config={siteConfig} />
+      </div>
+    </SmoothScroll>
   );
 }
