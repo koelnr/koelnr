@@ -5,6 +5,7 @@ import { SignIn } from "./auth/sign-in";
 import { SignUp } from "./auth/sign-up";
 import { ForgotPassword } from "./auth/forgot-password";
 import { ProtectedRoute } from "@/components/protected-route";
+import { Dashboard } from "./dashboard";
 
 export const router = createBrowserRouter([
   {
@@ -15,7 +16,7 @@ export const router = createBrowserRouter([
       {
         Component: ProtectedRoute,
         children: [
-          // Add protected routes here
+          { path: "dashboard", Component: Dashboard },
         ],
       },
     ],
