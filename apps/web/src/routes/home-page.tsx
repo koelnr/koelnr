@@ -11,9 +11,9 @@ import { SmoothScroll } from "@/components/animations/smooth-scroll";
 
 export default function HomePage() {
   return (
-    <SmoothScroll>
-      <div className="min-h-screen bg-background text-foreground">
-        <Navbar config={siteConfig} />
+    <div className="min-h-screen bg-background text-foreground">
+      <Navbar config={siteConfig} />
+      <SmoothScroll className="pt-16">
         <main>
           <Hero config={siteConfig.hero} />
           <Services services={siteConfig.services} />
@@ -27,7 +27,7 @@ export default function HomePage() {
           <Contact config={siteConfig} />
         </main>
         <Footer config={siteConfig} />
-      </div>
-    </SmoothScroll>
+      </SmoothScroll>
+    </div>
   );
 }

@@ -14,6 +14,7 @@ interface SmoothScrollProps {
   speed?: number;
   /** Touch device smoothing (default: same as smooth) */
   smoothTouch?: number | false;
+  className?: string;
 }
 
 export function SmoothScroll({
@@ -21,6 +22,7 @@ export function SmoothScroll({
   smooth = 1.2,
   speed = 1,
   smoothTouch = false,
+  className,
 }: SmoothScrollProps) {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -62,7 +64,7 @@ export function SmoothScroll({
   }, [smooth, speed, smoothTouch]);
 
   return (
-    <div id="smooth-wrapper" ref={wrapperRef}>
+    <div id="smooth-wrapper" ref={wrapperRef} className={className}>
       <div id="smooth-content" ref={contentRef}>
         {children}
       </div>
