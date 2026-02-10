@@ -1,13 +1,5 @@
 import { create } from "zustand";
-import {
-  onAuthStateChanged,
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-  signInWithPopup,
-  signOut as firebaseSignOut,
-  type User,
-} from "firebase/auth";
-import { auth, googleProvider } from "@/lib/firebase";
+import type { User } from "firebase/auth";
 
 type AuthState = {
   user: User | null;
@@ -18,27 +10,46 @@ type AuthState = {
   signOut: () => Promise<void>;
 };
 
+const getFirebaseAuth = async () => {
+  const { auth, googleProvider } = await import("@/lib/firebase");
+  return { auth, googleProvider };
+};
+
 export const useAuthStore = create<AuthState>(() => ({
   user: null,
   loading: true,
 
   signIn: async (email, password) => {
+    const { signInWithEmailAndPassword } = await import("firebase/auth");
+    const { auth } = await getFirebaseAuth();
     await signInWithEmailAndPassword(auth, email, password);
   },
 
   signUp: async (email, password) => {
+    const { createUserWithEmailAndPassword } = await import("firebase/auth");
+    const { auth } = await getFirebaseAuth();
     await createUserWithEmailAndPassword(auth, email, password);
   },
 
   signInWithGoogle: async () => {
+    const { signInWithPopup } = await import("firebase/auth");
+    const { auth, googleProvider } = await getFirebaseAuth();
     await signInWithPopup(auth, googleProvider);
   },
 
   signOut: async () => {
-    await firebaseSignOut(auth);
+    const { signOut } = await import("firebase/auth");
+    const { auth } = await getFirebaseAuth();
+    await signOut(auth);
   },
 }));
 
-onAuthStateChanged(auth, (user) => {
-  useAuthStore.setState({ user, loading: false });
-});
+if (typeof window !== "undefined") {
+  import("firebase/auth").then(({ onAuthStateChanged }) => {
+    getFirebaseAuth().then(({ auth }) => {
+      onAuthStateChanged(auth, (user) => {
+        useAuthStore.setState({ user, loading: false });
+      });
+    });
+  });
+}
