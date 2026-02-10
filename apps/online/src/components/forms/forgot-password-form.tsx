@@ -1,43 +1,41 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState } from "react";
+import { sendPasswordResetEmail } from "firebase/auth";
+import { FirebaseError } from "firebase/app";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { forgotPassword, type ForgotPasswordData } from "@/app/actions";
+import { getFirebaseError } from "@/lib/utils";
 
 export function ForgotPasswordForm() {
-  const [isPending, startTransition] = useTransition();
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [sent, setSent] = useState(false);
   const [email, setEmail] = useState("");
-  const [errors, setErrors] = useState<Record<string, string>>({});
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
-    setErrors({});
+    setLoading(true);
 
     const formData = new FormData(e.currentTarget);
     const emailValue = formData.get("email") as string;
     setEmail(emailValue);
 
-    const data: ForgotPasswordData = {
-      email: emailValue,
-    };
-
-    startTransition(async () => {
-      const result = await forgotPassword(data);
-
-      if (result.success) {
-        setSent(true);
+    try {
+      const { auth } = await import("@/lib/firebase");
+      await sendPasswordResetEmail(auth, emailValue);
+      setSent(true);
+    } catch (err) {
+      if (err instanceof FirebaseError) {
+        setError(getFirebaseError(err.code));
       } else {
-        setError(result.message);
-        if (result.errors) {
-          setErrors(result.errors);
-        }
+        setError("Something went wrong. Please try again.");
       }
-    });
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (sent) {
@@ -68,13 +66,10 @@ export function ForgotPasswordForm() {
           required
           autoComplete="email"
         />
-        {errors.email && (
-          <p className="text-xs text-destructive">{errors.email}</p>
-        )}
       </div>
 
-      <Button type="submit" disabled={isPending} className="w-full">
-        {isPending ? "Sending…" : "Send reset link"}
+      <Button type="submit" disabled={loading} className="w-full">
+        {loading ? "Sending…" : "Send reset link"}
       </Button>
     </form>
   );

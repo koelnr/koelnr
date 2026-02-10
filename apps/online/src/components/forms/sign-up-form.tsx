@@ -1,55 +1,67 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { FirebaseError } from "firebase/app";
+import { useAuthStore } from "@/stores/auth-store";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { signUp, signInWithGoogle, type SignUpData } from "@/app/actions";
+import { getFirebaseError } from "@/lib/utils";
 
 export function SignUpForm() {
   const router = useRouter();
-  const [isPending, startTransition] = useTransition();
+  const signUp = useAuthStore((s) => s.signUp);
+  const signInWithGoogle = useAuthStore((s) => s.signInWithGoogle);
   const [error, setError] = useState("");
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
-    setErrors({});
+    setLoading(true);
 
     const formData = new FormData(e.currentTarget);
-    const data: SignUpData = {
-      email: formData.get("email") as string,
-      password: formData.get("password") as string,
-      confirmPassword: formData.get("confirmPassword") as string,
-    };
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
+    const confirmPassword = formData.get("confirmPassword") as string;
 
-    startTransition(async () => {
-      const result = await signUp(data);
+    if (password !== confirmPassword) {
+      setError("Passwords do not match.");
+      setLoading(false);
+      return;
+    }
 
-      if (result.success) {
-        router.push("/dashboard");
+    try {
+      await signUp(email, password);
+      router.push("/dashboard");
+    } catch (err) {
+      if (err instanceof FirebaseError) {
+        setError(getFirebaseError(err.code));
       } else {
-        setError(result.message);
-        if (result.errors) {
-          setErrors(result.errors);
-        }
+        setError("Something went wrong. Please try again.");
       }
-    });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleGoogleSignIn = async () => {
     setError("");
-    startTransition(async () => {
-      const result = await signInWithGoogle();
-      if (result.success) {
-        router.push("/dashboard");
+    setLoading(true);
+    try {
+      await signInWithGoogle();
+      router.push("/dashboard");
+    } catch (err) {
+      if (err instanceof FirebaseError) {
+        setError(getFirebaseError(err.code));
       } else {
-        setError(result.message);
+        setError("Something went wrong. Please try again.");
       }
-    });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -71,9 +83,6 @@ export function SignUpForm() {
             required
             autoComplete="email"
           />
-          {errors.email && (
-            <p className="text-xs text-destructive">{errors.email}</p>
-          )}
         </div>
 
         <div className="grid gap-2">
@@ -87,9 +96,6 @@ export function SignUpForm() {
             minLength={6}
             autoComplete="new-password"
           />
-          {errors.password && (
-            <p className="text-xs text-destructive">{errors.password}</p>
-          )}
         </div>
 
         <div className="grid gap-2">
@@ -103,13 +109,10 @@ export function SignUpForm() {
             minLength={6}
             autoComplete="new-password"
           />
-          {errors.confirmPassword && (
-            <p className="text-xs text-destructive">{errors.confirmPassword}</p>
-          )}
         </div>
 
-        <Button type="submit" disabled={isPending} className="w-full">
-          {isPending ? "Creating account…" : "Create account"}
+        <Button type="submit" disabled={loading} className="w-full">
+          {loading ? "Creating account…" : "Create account"}
         </Button>
       </form>
 
@@ -123,7 +126,7 @@ export function SignUpForm() {
         variant="outline"
         className="w-full"
         onClick={handleGoogleSignIn}
-        disabled={isPending}
+        disabled={loading}
       >
         <svg className="size-4" viewBox="0 0 24 24">
           <path

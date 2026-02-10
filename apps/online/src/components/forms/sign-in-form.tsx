@@ -1,55 +1,63 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { FirebaseError } from "firebase/app";
+import { useAuthStore } from "@/stores/auth-store";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { signIn, signInWithGoogle, type SignInData } from "@/app/actions";
+import { getFirebaseError } from "@/lib/utils";
 
 export function SignInForm() {
   const router = useRouter();
-  const [isPending, startTransition] = useTransition();
+  const searchParams = useSearchParams();
+  const from = searchParams.get("from") || "/dashboard";
+  const signIn = useAuthStore((s) => s.signIn);
+  const signInWithGoogle = useAuthStore((s) => s.signInWithGoogle);
   const [error, setError] = useState("");
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
-    setErrors({});
+    setLoading(true);
 
     const formData = new FormData(e.currentTarget);
-    const data: SignInData = {
-      email: formData.get("email") as string,
-      password: formData.get("password") as string,
-    };
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
 
-    startTransition(async () => {
-      const result = await signIn(data);
-
-      if (result.success) {
-        router.push("/dashboard");
+    try {
+      await signIn(email, password);
+      router.push(from);
+    } catch (err) {
+      if (err instanceof FirebaseError) {
+        setError(getFirebaseError(err.code));
       } else {
-        setError(result.message);
-        if (result.errors) {
-          setErrors(result.errors);
-        }
+        setError("Something went wrong. Please try again.");
       }
-    });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleGoogleSignIn = async () => {
     setError("");
-    startTransition(async () => {
-      const result = await signInWithGoogle();
-      if (result.success) {
-        router.push("/dashboard");
+    setLoading(true);
+    try {
+      await signInWithGoogle();
+      router.push(from);
+    } catch (err) {
+      if (err instanceof FirebaseError) {
+        setError(getFirebaseError(err.code));
       } else {
-        setError(result.message);
+        setError("Something went wrong. Please try again.");
       }
-    });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -71,9 +79,6 @@ export function SignInForm() {
             required
             autoComplete="email"
           />
-          {errors.email && (
-            <p className="text-xs text-destructive">{errors.email}</p>
-          )}
         </div>
 
         <div className="grid gap-2">
@@ -94,13 +99,10 @@ export function SignInForm() {
             required
             autoComplete="current-password"
           />
-          {errors.password && (
-            <p className="text-xs text-destructive">{errors.password}</p>
-          )}
         </div>
 
-        <Button type="submit" disabled={isPending} className="w-full">
-          {isPending ? "Signing in…" : "Sign in"}
+        <Button type="submit" disabled={loading} className="w-full">
+          {loading ? "Signing in…" : "Sign in"}
         </Button>
       </form>
 
@@ -114,7 +116,7 @@ export function SignInForm() {
         variant="outline"
         className="w-full"
         onClick={handleGoogleSignIn}
-        disabled={isPending}
+        disabled={loading}
       >
         <svg className="size-4" viewBox="0 0 24 24">
           <path

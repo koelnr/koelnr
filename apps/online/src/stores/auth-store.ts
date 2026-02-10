@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import type { User } from "firebase/auth";
+import { getUserProfile, createUserProfile } from "@/lib/firestore";
 
 type AuthState = {
   user: User | null;
@@ -28,13 +29,33 @@ export const useAuthStore = create<AuthState>(() => ({
   signUp: async (email, password) => {
     const { createUserWithEmailAndPassword } = await import("firebase/auth");
     const { auth } = await getFirebaseAuth();
-    await createUserWithEmailAndPassword(auth, email, password);
+    const userCredential = await createUserWithEmailAndPassword(
+      auth,
+      email,
+      password,
+    );
+
+    // Initialize user profile in Firestore for new users
+    const existingProfile = await getUserProfile(userCredential.user.uid);
+    if (!existingProfile) {
+      await createUserProfile(userCredential.user.uid, {
+        vehicleType: "hatchSedan",
+      });
+    }
   },
 
   signInWithGoogle: async () => {
     const { signInWithPopup } = await import("firebase/auth");
     const { auth, googleProvider } = await getFirebaseAuth();
-    await signInWithPopup(auth, googleProvider);
+    const userCredential = await signInWithPopup(auth, googleProvider);
+
+    // Initialize user profile in Firestore if it doesn't exist
+    const existingProfile = await getUserProfile(userCredential.user.uid);
+    if (!existingProfile) {
+      await createUserProfile(userCredential.user.uid, {
+        vehicleType: "hatchSedan",
+      });
+    }
   },
 
   signOut: async () => {
