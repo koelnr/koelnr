@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { ScrollReveal } from "@/components/animations/scroll-reveal";
 import type { SiteConfig } from "@/config/site";
 
@@ -39,11 +40,12 @@ export function About({ config }: { config: AboutConfig }) {
           </div>
 
           <ScrollReveal direction="right">
-            <div className="overflow-hidden rounded-2xl">
-              <img
+            <div className="relative overflow-hidden rounded-2xl aspect-video">
+              <Image
                 src={config.image}
                 alt="About Koelnr"
-                className="h-full max-h-[50vh] w-full object-cover"
+                fill
+                className="object-cover"
               />
             </div>
           </ScrollReveal>

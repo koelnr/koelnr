@@ -1,7 +1,8 @@
+import Image from "next/image";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ScrollReveal } from "@/components/animations/scroll-reveal";
 import type { SiteConfig } from "@/config/site";
-import Link from "next/link";
 
 type HeroConfig = SiteConfig["hero"];
 
@@ -9,10 +10,12 @@ export function Hero({ config }: { config: HeroConfig }) {
   return (
     <section className="relative overflow-hidden">
       <div className="absolute inset-0">
-        <img
+        <Image
           src={config.image}
           alt="Car wash hero"
-          className="h-full w-full object-cover opacity-20"
+          fill
+          priority
+          className="object-cover opacity-20"
         />
         <div className="absolute inset-0 bg-linear-to-b from-background/10 to-background" />
       </div>

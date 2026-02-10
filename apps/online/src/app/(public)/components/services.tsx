@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { Droplets, Waves, SprayCan, Sparkles } from "lucide-react";
 import {
   Card,
@@ -46,11 +47,12 @@ export function Services({ services }: { services: readonly Service[] }) {
                 key={service.title}
                 className="pt-0 group overflow-hidden border-border/50 transition-colors hover:border-border"
               >
-                <div className="aspect-3/2 overflow-hidden">
-                  <img
+                <div className="relative aspect-3/2 overflow-hidden">
+                  <Image
                     src={service.image}
                     alt={service.title}
-                    className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                    fill
+                    className="object-cover transition-transform duration-300 group-hover:scale-105"
                   />
                 </div>
                 <CardHeader>

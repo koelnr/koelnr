@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { Menu, X, LogOut, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -43,10 +44,12 @@ export function Navbar({ config }: { config: SiteConfig }) {
                   <Button size="sm" variant="ghost" asChild>
                     <Link href="/dashboard" className="gap-1.5">
                       {user.photoURL ? (
-                        <img
+                        <Image
                           src={user.photoURL}
                           alt=""
-                          className="size-5 rounded-full"
+                          width={20}
+                          height={20}
+                          className="rounded-full"
                           referrerPolicy="no-referrer"
                         />
                       ) : (
@@ -109,10 +112,12 @@ export function Navbar({ config }: { config: SiteConfig }) {
                   <Button size="sm" variant="outline" className="w-full" asChild>
                     <Link href="/dashboard" onClick={() => setOpen(false)}>
                       {user.photoURL ? (
-                        <img
+                        <Image
                           src={user.photoURL}
                           alt=""
-                          className="size-5 rounded-full"
+                          width={20}
+                          height={20}
+                          className="rounded-full"
                           referrerPolicy="no-referrer"
                         />
                       ) : (
