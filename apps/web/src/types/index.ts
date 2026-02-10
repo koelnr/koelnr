@@ -39,8 +39,7 @@ export interface Order {
   totalAmount: number;
   currency: string;
   status: OrderStatus;
-  razorpayOrderId?: string;
-  razorpayPaymentId?: string;
+  paymentId?: string;
   scheduledSlot?: string;
   scheduledDate?: string;
   createdAt: Timestamp;
@@ -55,6 +54,5 @@ export interface Subscription {
   status: SubscriptionStatus;
   startDate: Timestamp;
   currentPeriodEnd: Timestamp;
-  razorpayOrderId?: string;
-  razorpayPaymentId?: string;
+  paymentId?: string;
 }

@@ -80,7 +80,7 @@ export async function createSubscription(data: {
   planName: string;
   vehicleType: VehicleType;
   monthlyPrice: number;
-  razorpayOrderId?: string;
+  paymentId?: string;
 }): Promise<string> {
   const now = Timestamp.now();
   const endDate = new Date();
@@ -91,11 +91,10 @@ export async function createSubscription(data: {
     planName: data.planName,
     vehicleType: data.vehicleType,
     monthlyPrice: data.monthlyPrice,
-    status: "pending",
+    status: "active",
     startDate: now,
     currentPeriodEnd: Timestamp.fromDate(endDate),
-    razorpayOrderId: data.razorpayOrderId ?? null,
-    razorpayPaymentId: null,
+    paymentId: data.paymentId ?? null,
   });
   return docRef.id;
 }
@@ -123,7 +122,7 @@ export async function createOrder(data: {
   totalAmount: number;
   scheduledSlot?: string;
   scheduledDate?: string;
-  razorpayOrderId?: string;
+  paymentId?: string;
 }): Promise<string> {
   const docRef = await addDoc(collection(db, "orders"), {
     userId: data.userId,
@@ -132,8 +131,7 @@ export async function createOrder(data: {
     totalAmount: data.totalAmount,
     currency: "INR",
     status: "created" as OrderStatus,
-    razorpayOrderId: data.razorpayOrderId ?? null,
-    razorpayPaymentId: null,
+    paymentId: data.paymentId ?? null,
     scheduledSlot: data.scheduledSlot ?? null,
     scheduledDate: data.scheduledDate ?? null,
     createdAt: serverTimestamp(),
@@ -147,6 +145,6 @@ export async function updateOrderStatus(
   paymentId?: string,
 ): Promise<void> {
   const updates: Record<string, unknown> = { status };
-  if (paymentId) updates.razorpayPaymentId = paymentId;
+  if (paymentId) updates.paymentId = paymentId;
   await updateDoc(doc(db, "orders", orderId), updates);
 }

@@ -48,8 +48,6 @@ export function OnDemandServices() {
           servicePrice={selected.price}
           vehicleType={vehicleType}
           userId={user.uid}
-          userEmail={user.email ?? ""}
-          userName={user.displayName ?? ""}
         />
       )}
     </>

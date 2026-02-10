@@ -97,8 +97,6 @@ export function SubscriptionPlans() {
           type="subscription"
           planName={selectedPlan}
           userId={user.uid}
-          userEmail={user.email ?? ""}
-          userName={user.displayName ?? ""}
         />
       )}
     </>

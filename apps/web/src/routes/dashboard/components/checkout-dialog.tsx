@@ -11,7 +11,7 @@ import { useUserProfileStore } from "@/stores/user-profile-store";
 import { useSubscriptionStore } from "@/stores/subscription-store";
 import { useOrderStore } from "@/stores/order-store";
 import { getSubscriptionPrice, formatPrice } from "@/lib/pricing";
-import { initiatePayment } from "@/lib/razorpay";
+import { initiatePayment } from "@/lib/payment";
 import { SlotPicker } from "./slot-picker";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -21,8 +21,6 @@ type CheckoutDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   userId: string;
-  userEmail: string;
-  userName: string;
 } & (
   | {
       type: "subscription";
@@ -48,8 +46,6 @@ export function CheckoutDialog({
   serviceName,
   servicePrice,
   userId,
-  userEmail,
-  userName,
 }: CheckoutDialogProps) {
   const vehicleType = useUserProfileStore((s) => s.vehicleType);
   const fetchSubscription = useSubscriptionStore((s) => s.fetchSubscription);
@@ -78,8 +74,7 @@ export function CheckoutDialog({
         vehicleType,
         scheduledSlot: !isSubscription ? selectedSlot : undefined,
         scheduledDate: !isSubscription ? selectedDate : undefined,
-        userName,
-        userEmail,
+        userId,
       });
 
       if (result.success) {
