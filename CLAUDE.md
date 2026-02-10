@@ -108,6 +108,15 @@ The `packages/` directory exists for shared code but has no packages yet.
 - Show success/error messages in a banner at the top of the form
 - Reset form on successful submission
 
+### Authentication (apps/online)
+
+- Auth pages in `src/app/(auth)/` route group: `/sign-in`, `/sign-up`, `/forgot-password`
+- Auth forms in `src/components/forms/`: `sign-in-form.tsx`, `sign-up-form.tsx`, `forgot-password-form.tsx`
+- Auth actions in `src/app/actions.ts`: `signIn`, `signUp`, `forgotPassword`, `signInWithGoogle`
+- Currently using placeholder actions — Firebase Auth integration pending
+- All auth forms include email/password and Google OAuth options
+- Forms redirect to `/dashboard` on successful authentication
+
 ### General
 
 - Imports use the `@/` path alias — never use relative paths that go above `src/`
