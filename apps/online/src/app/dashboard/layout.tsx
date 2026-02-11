@@ -1,6 +1,7 @@
 import { ProtectedRoute } from "@/components/protected-route";
 import { DashboardNav } from "@/components/dashboard/dashboard-nav";
 import { WhatsAppFloat } from "@/components/whatsapp-float";
+import { OnboardingModal } from "@/components/onboarding-modal";
 
 export default function DashboardLayout({
   children,
@@ -28,6 +29,7 @@ export default function DashboardLayout({
           {children}
         </main>
         <WhatsAppFloat />
+        <OnboardingModal />
       </div>
     </ProtectedRoute>
   );
