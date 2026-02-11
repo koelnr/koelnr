@@ -1,8 +1,12 @@
 "use client";
 
+import { useState, useEffect } from "react";
+import { toast } from "sonner";
 import { useAuthStore } from "@/stores/auth-store";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import {
   Calendar,
@@ -11,9 +15,36 @@ import {
   ArrowRight,
   CheckCircle2,
 } from "lucide-react";
+import { getActiveSubscription, getOrdersByUserId } from "@/lib/firestore";
+import type { Subscription, Order } from "@/lib/firestore";
 
 export default function DashboardPage() {
   const user = useAuthStore((s) => s.user);
+  const [subscription, setSubscription] = useState<Subscription | null>(null);
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Load data
+  useEffect(() => {
+    if (!user) return;
+
+    Promise.all([
+      getActiveSubscription(user.uid),
+      getOrdersByUserId(user.uid),
+    ])
+      .then(([sub, ordersData]) => {
+        setSubscription(sub);
+        setOrders(ordersData);
+      })
+      .catch((err) => {
+        console.error("Failed to load dashboard data:", err);
+        toast.error("Failed to load dashboard data");
+      })
+      .finally(() => setLoading(false));
+  }, [user]);
+
+  const paidOrdersCount = orders.filter(o => o.status === "paid").length;
+  const recentOrders = orders.slice(0, 5);
 
   return (
     <div className="space-y-8">
@@ -37,10 +68,23 @@ export default function DashboardPage() {
             <Calendar className="size-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">None</div>
-            <p className="text-xs text-muted-foreground">
-              Subscribe for daily car care
-            </p>
+            {loading ? (
+              <Skeleton className="h-8 w-20" />
+            ) : subscription ? (
+              <>
+                <div className="text-2xl font-bold">{subscription.planName}</div>
+                <p className="text-xs text-muted-foreground">
+                  {subscription.vehicleType === "hatchSedan" ? "Hatch/Sedan" : "SUV/MUV"}
+                </p>
+              </>
+            ) : (
+              <>
+                <div className="text-2xl font-bold">None</div>
+                <p className="text-xs text-muted-foreground">
+                  Subscribe for daily car care
+                </p>
+              </>
+            )}
           </CardContent>
         </Card>
 
@@ -52,10 +96,16 @@ export default function DashboardPage() {
             <ShoppingBag className="size-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">0</div>
-            <p className="text-xs text-muted-foreground">
-              Services completed this month
-            </p>
+            {loading ? (
+              <Skeleton className="h-8 w-12" />
+            ) : (
+              <>
+                <div className="text-2xl font-bold">{paidOrdersCount}</div>
+                <p className="text-xs text-muted-foreground">
+                  Total orders placed
+                </p>
+              </>
+            )}
           </CardContent>
         </Card>
 
@@ -147,15 +197,48 @@ export default function DashboardPage() {
           </p>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-col items-center justify-center py-8 text-center">
-            <div className="rounded-full bg-muted p-4">
-              <ShoppingBag className="size-6 text-muted-foreground" />
+          {loading ? (
+            <div className="space-y-3">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="flex items-center gap-4">
+                  <Skeleton className="h-12 w-12 rounded" />
+                  <div className="flex-1 space-y-2">
+                    <Skeleton className="h-4 w-3/4" />
+                    <Skeleton className="h-3 w-1/2" />
+                  </div>
+                </div>
+              ))}
             </div>
-            <p className="mt-4 text-sm font-medium">No activity yet</p>
-            <p className="text-sm text-muted-foreground">
-              Subscribe to a plan or book a service to get started
-            </p>
-          </div>
+          ) : recentOrders.length > 0 ? (
+            <div className="space-y-4">
+              {recentOrders.map((order) => (
+                <div key={order.id} className="flex items-center justify-between border-b pb-3 last:border-0">
+                  <div className="flex-1">
+                    <p className="font-medium">{order.items[0]?.name || "Order"}</p>
+                    <p className="text-sm text-muted-foreground">
+                      ₹{order.totalAmount} · {order.type}
+                    </p>
+                  </div>
+                  <Badge variant={order.status === "paid" ? "default" : order.status === "failed" ? "destructive" : "secondary"}>
+                    {order.status}
+                  </Badge>
+                </div>
+              ))}
+              <Button asChild variant="outline" className="w-full">
+                <Link href="/dashboard/orders">View All Orders</Link>
+              </Button>
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center py-8 text-center">
+              <div className="rounded-full bg-muted p-4">
+                <ShoppingBag className="size-6 text-muted-foreground" />
+              </div>
+              <p className="mt-4 text-sm font-medium">No activity yet</p>
+              <p className="text-sm text-muted-foreground">
+                Subscribe to a plan or book a service to get started
+              </p>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>
