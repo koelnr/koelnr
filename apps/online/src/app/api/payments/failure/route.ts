@@ -44,12 +44,16 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // Redirect to failure page
+    // Redirect to failure page with order ID for retry
+    const params = new URLSearchParams({
+      error: errorMessage,
+    });
+    if (orderId) {
+      params.set("orderId", orderId);
+    }
+
     return NextResponse.redirect(
-      new URL(
-        `/dashboard/payments/failure?error=${encodeURIComponent(errorMessage)}`,
-        request.url,
-      ),
+      new URL(`/dashboard/payments/failure?${params.toString()}`, request.url),
     );
   } catch (error) {
     console.error("Error processing payment failure:", error);
