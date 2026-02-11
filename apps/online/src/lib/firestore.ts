@@ -30,21 +30,53 @@ export async function createUserProfile(
   uid: string,
   data: { vehicleType: VehicleType; phone?: string; address?: string },
 ): Promise<void> {
+  const cleanedPhone = data.phone ? sanitizePhone(data.phone) : "";
+  if (cleanedPhone && (cleanedPhone.length < 10 || cleanedPhone.length > 15)) {
+    throw new Error("Phone number must be 10-15 digits");
+  }
+
   await setDoc(doc(db, "users", uid), {
     vehicleType: data.vehicleType,
-    phone: data.phone ?? "",
-    address: data.address ?? "",
+    phone: cleanedPhone,
+    address: data.address ? sanitizeString(data.address) : "",
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
   });
+}
+
+// Sanitization helpers
+function sanitizeString(input: string): string {
+  return input.trim().replace(/[<>]/g, "");
+}
+
+function sanitizePhone(phone: string): string {
+  return phone.replace(/\D/g, "");
 }
 
 export async function updateUserProfile(
   uid: string,
   data: Partial<Pick<UserProfile, "vehicleType" | "phone" | "address">>,
 ): Promise<void> {
+  const sanitized: any = {};
+
+  if (data.phone !== undefined) {
+    const cleanedPhone = sanitizePhone(data.phone);
+    if (cleanedPhone.length < 10 || cleanedPhone.length > 15) {
+      throw new Error("Phone number must be 10-15 digits");
+    }
+    sanitized.phone = cleanedPhone;
+  }
+
+  if (data.address !== undefined) {
+    sanitized.address = sanitizeString(data.address);
+  }
+
+  if (data.vehicleType !== undefined) {
+    sanitized.vehicleType = data.vehicleType;
+  }
+
   await updateDoc(doc(db, "users", uid), {
-    ...data,
+    ...sanitized,
     updatedAt: serverTimestamp(),
   });
 }

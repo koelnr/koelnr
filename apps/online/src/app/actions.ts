@@ -233,9 +233,15 @@ const createOrderSchema = z.object({
   planName: z.string().optional(),
   vehicleType: z.enum(["hatchSedan", "suvMuv"]).optional(),
   customerInfo: z.object({
-    name: z.string().min(2, "Name must be at least 2 characters"),
+    name: z.string()
+      .min(2, "Name must be at least 2 characters")
+      .max(50, "Name must be less than 50 characters")
+      .regex(/^[a-zA-Z\s.'-]+$/, "Name contains invalid characters"),
     email: z.string().email("Invalid email address"),
-    phone: z.string().min(10, "Phone number must be at least 10 digits"),
+    phone: z.string()
+      .min(10, "Phone number must be at least 10 digits")
+      .max(15, "Phone number must be at most 15 digits")
+      .regex(/^\+?[0-9]{10,15}$/, "Invalid phone number format"),
   }),
 });
 
