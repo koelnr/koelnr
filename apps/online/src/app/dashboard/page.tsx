@@ -11,7 +11,6 @@ import Link from "next/link";
 import {
   Calendar,
   ShoppingBag,
-  Sparkles,
   ArrowRight,
   CheckCircle2,
 } from "lucide-react";
@@ -59,7 +58,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Quick Stats */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-2">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">
@@ -109,18 +108,6 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Rewards Points</CardTitle>
-            <Sparkles className="size-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">0</div>
-            <p className="text-xs text-muted-foreground">
-              Earn points with every service
-            </p>
-          </CardContent>
-        </Card>
       </div>
 
       {/* Get Started Section */}
