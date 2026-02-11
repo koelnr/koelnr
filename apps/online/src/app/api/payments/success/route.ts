@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { adminDb } from "@/lib/firebase-admin";
 import { verifyPayUHash } from "@/lib/payu-hash";
 import type { PayUResponse } from "@/lib/payu-hash";
-import { FieldValue } from "firebase-admin/firestore";
+import { FieldValue, Timestamp } from "firebase-admin/firestore";
 
 export async function POST(request: NextRequest) {
   try {
@@ -70,9 +70,8 @@ export async function POST(request: NextRequest) {
       // Create subscription if this is a subscription order
       if (orderType === "subscription" && planName && vehicleType) {
         const subRef = adminDb.collection("subscriptions").doc();
-        const now = new Date();
-        const periodEnd = new Date();
-        periodEnd.setMonth(periodEnd.getMonth() + 1);
+        const oneMonthInMs = 30 * 24 * 60 * 60 * 1000;
+        const periodEnd = Timestamp.fromMillis(Date.now() + oneMonthInMs);
 
         transaction.set(subRef, {
           id: subRef.id,
