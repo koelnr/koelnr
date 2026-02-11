@@ -1,6 +1,12 @@
 "use server";
 
 import { z } from "zod";
+import { adminDb } from "@/lib/firebase-admin";
+import { generatePayUHash } from "@/lib/payu-hash";
+import { payuConfig, payuCallbacks } from "@/lib/payu-config";
+import type { CreateOrderData } from "@/types/payment";
+import type { PayUFormData } from "@/lib/payu-redirect";
+import { FieldValue } from "firebase-admin/firestore";
 
 const contactFormSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -206,4 +212,124 @@ export async function signInWithGoogle() {
     success: true,
     message: "Signed in with Google!",
   };
+}
+
+// Payment Actions
+
+const createOrderSchema = z.object({
+  userId: z.string().min(1, "User ID is required"),
+  type: z.enum(["subscription", "on_demand", "addon"]),
+  items: z.array(
+    z.object({
+      name: z.string(),
+      price: z.number().positive(),
+      quantity: z.number().int().positive(),
+    }),
+  ).min(1, "At least one item is required"),
+  planName: z.string().optional(),
+  vehicleType: z.enum(["hatchSedan", "suvMuv"]).optional(),
+  customerInfo: z.object({
+    name: z.string().min(2, "Name must be at least 2 characters"),
+    email: z.string().email("Invalid email address"),
+    phone: z.string().min(10, "Phone number must be at least 10 digits"),
+  }),
+});
+
+export async function createPaymentOrder(data: CreateOrderData): Promise<{
+  success: boolean;
+  payuParams?: PayUFormData;
+  payuUrl?: string;
+  message?: string;
+}> {
+  try {
+    // Validate input
+    const validatedData = createOrderSchema.parse(data);
+
+    // Calculate total amount
+    const totalAmount = validatedData.items.reduce(
+      (sum, item) => sum + item.price * item.quantity,
+      0,
+    );
+
+    // Generate unique transaction ID
+    const txnid = `TXN_${Date.now()}_${validatedData.userId.slice(0, 8)}`;
+
+    // Create order in Firestore
+    const orderRef = adminDb.collection("orders").doc();
+    const orderId = orderRef.id;
+
+    const orderData = {
+      id: orderId,
+      userId: validatedData.userId,
+      type: validatedData.type,
+      items: validatedData.items,
+      totalAmount,
+      currency: "INR" as const,
+      status: "created" as const,
+      paymentGateway: "payu" as const,
+      payuTxnId: txnid,
+      createdAt: FieldValue.serverTimestamp(),
+    };
+
+    await orderRef.set(orderData);
+
+    // Generate PayU hash
+    const amount = totalAmount.toFixed(2);
+    const productinfo = validatedData.items.map((item) => item.name).join(", ");
+
+    const hashParams = {
+      key: payuConfig.merchantKey,
+      txnid,
+      amount,
+      productinfo,
+      firstname: validatedData.customerInfo.name,
+      email: validatedData.customerInfo.email,
+      udf1: orderId,
+      udf2: validatedData.type,
+      udf3: validatedData.planName || "",
+      udf4: validatedData.vehicleType || "",
+      udf5: validatedData.userId,
+    };
+
+    const hash = generatePayUHash(hashParams);
+
+    // Prepare PayU form data
+    const payuParams: PayUFormData = {
+      key: payuConfig.merchantKey,
+      txnid,
+      amount,
+      productinfo,
+      firstname: validatedData.customerInfo.name,
+      email: validatedData.customerInfo.email,
+      phone: validatedData.customerInfo.phone,
+      surl: payuCallbacks.success,
+      furl: payuCallbacks.failure,
+      hash,
+      udf1: orderId,
+      udf2: validatedData.type,
+      udf3: validatedData.planName || "",
+      udf4: validatedData.vehicleType || "",
+      udf5: validatedData.userId,
+    };
+
+    return {
+      success: true,
+      payuParams,
+      payuUrl: payuConfig.baseUrl,
+    };
+  } catch (error) {
+    console.error("Error creating payment order:", error);
+
+    if (error instanceof z.ZodError) {
+      return {
+        success: false,
+        message: "Invalid order data: " + error.errors.map((e) => e.message).join(", "),
+      };
+    }
+
+    return {
+      success: false,
+      message: "Failed to create payment order. Please try again.",
+    };
+  }
 }

@@ -1,12 +1,71 @@
+"use client";
+
+import { useState } from "react";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle2 } from "lucide-react";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
+import { CheckCircle2, Loader2 } from "lucide-react";
 import type { SiteConfig } from "@/config/site";
+import { createPaymentOrder } from "@/app/actions";
+import { redirectToPayU } from "@/lib/payu-redirect";
 
 type SubscriptionPlan = SiteConfig["subscriptions"][number];
 
 export function SubscriptionCard({ plan }: { plan: SubscriptionPlan }) {
+  const [vehicleType, setVehicleType] = useState<"hatchSedan" | "suvMuv">("hatchSedan");
+  const [loading, setLoading] = useState(false);
+
+  const handleSubscribe = async () => {
+    setLoading(true);
+
+    try {
+      // TODO: Get actual user data from auth context
+      const userId = "user_123"; // Replace with actual user ID
+      const userEmail = "user@example.com"; // Replace with actual user email
+      const userName = "John Doe"; // Replace with actual user name
+      const userPhone = "9876543210"; // Replace with actual user phone
+
+      // Parse price (remove ₹ and comma)
+      const price = parseFloat(
+        (vehicleType === "hatchSedan" ? plan.hatchSedan.monthly : plan.suvMuv.monthly)
+          .replace("₹", "")
+          .replace(",", ""),
+      );
+
+      const result = await createPaymentOrder({
+        userId,
+        type: "subscription",
+        items: [
+          {
+            name: `${plan.name} - ${vehicleType === "hatchSedan" ? "Hatch/Sedan" : "SUV/MUV"}`,
+            price,
+            quantity: 1,
+          },
+        ],
+        planName: plan.name,
+        vehicleType,
+        customerInfo: {
+          name: userName,
+          email: userEmail,
+          phone: userPhone,
+        },
+      });
+
+      if (result.success && result.payuParams && result.payuUrl) {
+        redirectToPayU(result.payuUrl, result.payuParams);
+      } else {
+        alert(result.message || "Failed to create order");
+        setLoading(false);
+      }
+    } catch (error) {
+      console.error("Payment error:", error);
+      alert("Failed to initiate payment. Please try again.");
+      setLoading(false);
+    }
+  };
+
   return (
     <Card className={plan.highlighted ? "border-primary shadow-md" : ""}>
       {plan.highlighted && (
@@ -20,16 +79,27 @@ export function SubscriptionCard({ plan }: { plan: SubscriptionPlan }) {
       </CardHeader>
       <CardContent className="space-y-4">
         <div>
-          <div className="text-3xl font-bold">{plan.hatchSedan.monthly}</div>
-          <div className="text-sm text-muted-foreground">
-            Hatch/Sedan • {plan.hatchSedan.perWash}/wash
-          </div>
-          <div className="mt-1 text-sm font-medium text-primary">
-            {plan.suvMuv.monthly}
-          </div>
-          <div className="text-sm text-muted-foreground">
-            SUV/MUV • {plan.suvMuv.perWash}/wash
-          </div>
+          <p className="mb-2 text-sm font-medium">Select Vehicle Type:</p>
+          <RadioGroup value={vehicleType} onValueChange={(v) => setVehicleType(v as typeof vehicleType)}>
+            <div className="flex items-center space-x-2 rounded-lg border p-3">
+              <RadioGroupItem value="hatchSedan" id={`${plan.name}-hatchSedan`} />
+              <Label htmlFor={`${plan.name}-hatchSedan`} className="flex-1 cursor-pointer">
+                <div className="font-medium">{plan.hatchSedan.monthly}/month</div>
+                <div className="text-sm text-muted-foreground">
+                  Hatch/Sedan • {plan.hatchSedan.perWash}/wash
+                </div>
+              </Label>
+            </div>
+            <div className="flex items-center space-x-2 rounded-lg border p-3">
+              <RadioGroupItem value="suvMuv" id={`${plan.name}-suvMuv`} />
+              <Label htmlFor={`${plan.name}-suvMuv`} className="flex-1 cursor-pointer">
+                <div className="font-medium">{plan.suvMuv.monthly}/month</div>
+                <div className="text-sm text-muted-foreground">
+                  SUV/MUV • {plan.suvMuv.perWash}/wash
+                </div>
+              </Label>
+            </div>
+          </RadioGroup>
         </div>
 
         <div className="space-y-2 border-t pt-4">
@@ -54,8 +124,20 @@ export function SubscriptionCard({ plan }: { plan: SubscriptionPlan }) {
         </div>
       </CardContent>
       <CardFooter>
-        <Button className="w-full" variant={plan.highlighted ? "default" : "outline"}>
-          Subscribe to {plan.name}
+        <Button
+          className="w-full"
+          variant={plan.highlighted ? "default" : "outline"}
+          onClick={handleSubscribe}
+          disabled={loading}
+        >
+          {loading ? (
+            <>
+              <Loader2 className="mr-2 size-4 animate-spin" />
+              Processing...
+            </>
+          ) : (
+            `Subscribe to ${plan.name}`
+          )}
         </Button>
       </CardFooter>
     </Card>
