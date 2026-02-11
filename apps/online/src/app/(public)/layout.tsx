@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
+import { WhatsAppFloat } from "@/components/whatsapp-float";
 import { siteConfig } from "@/config/site";
 
 export const metadata: Metadata = {
@@ -14,6 +15,7 @@ export default function PublicLayout({ children }: LayoutProps<"/">) {
       <Navbar config={siteConfig} />
       <div className="pt-16">{children}</div>
       <Footer config={siteConfig} />
+      <WhatsAppFloat />
     </>
   );
 }

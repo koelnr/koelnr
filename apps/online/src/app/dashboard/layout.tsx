@@ -1,5 +1,6 @@
 import { ProtectedRoute } from "@/components/protected-route";
 import { DashboardNav } from "@/components/dashboard/dashboard-nav";
+import { WhatsAppFloat } from "@/components/whatsapp-float";
 
 export default function DashboardLayout({
   children,
@@ -26,6 +27,7 @@ export default function DashboardLayout({
         <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
           {children}
         </main>
+        <WhatsAppFloat />
       </div>
     </ProtectedRoute>
   );
