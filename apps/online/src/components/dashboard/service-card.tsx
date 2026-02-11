@@ -1,6 +1,10 @@
+"use client";
+
+import { useState } from "react";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { ServiceBookingModal } from "./service-booking-modal";
 
 type Service = {
   name: string;
@@ -15,6 +19,8 @@ export function ServiceCard({
   service: Service;
   featured?: boolean;
 }) {
+  const [showBooking, setShowBooking] = useState(false);
+
   return (
     <Card className={featured ? "border-primary" : ""}>
       <CardContent className="pt-6">
@@ -34,10 +40,19 @@ export function ServiceCard({
         </div>
       </CardContent>
       <CardFooter>
-        <Button className="w-full" variant={featured ? "default" : "outline"}>
+        <Button
+          className="w-full"
+          variant={featured ? "default" : "outline"}
+          onClick={() => setShowBooking(true)}
+        >
           Book Now
         </Button>
       </CardFooter>
+      <ServiceBookingModal
+        open={showBooking}
+        onOpenChange={setShowBooking}
+        service={service}
+      />
     </Card>
   );
 }
