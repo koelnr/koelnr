@@ -1,31 +1,74 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { CheckCircle2, Loader2 } from "lucide-react";
+import { CheckCircle2, Loader2, AlertCircle } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import type { SiteConfig } from "@/config/site";
 import { createPaymentOrder } from "@/app/actions";
 import { redirectToPayU } from "@/lib/payu-redirect";
+import { useAuthStore } from "@/stores/auth-store";
+import { getUserProfile } from "@/lib/firestore";
+import type { UserProfile } from "@/lib/firestore";
 
 type SubscriptionPlan = SiteConfig["subscriptions"][number];
 
 export function SubscriptionCard({ plan }: { plan: SubscriptionPlan }) {
+  const router = useRouter();
+  const { user, loading: authLoading } = useAuthStore();
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [vehicleType, setVehicleType] = useState<"hatchSedan" | "suvMuv">("hatchSedan");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // Fetch user profile on mount
+  useEffect(() => {
+    if (user) {
+      getUserProfile(user.uid).then((profile) => {
+        if (profile) {
+          setUserProfile(profile);
+          // Set default vehicle type from profile
+          setVehicleType(profile.vehicleType);
+        }
+      });
+    }
+  }, [user]);
 
   const handleSubscribe = async () => {
+    setError(null);
+
+    // Check authentication
+    if (!user) {
+      setError("Please sign in to subscribe");
+      setTimeout(() => router.push("/sign-in"), 2000);
+      return;
+    }
+
+    // Check user profile
+    if (!userProfile) {
+      setError("Loading your profile...");
+      return;
+    }
+
+    // Check if phone number is available
+    if (!userProfile.phone || userProfile.phone.length < 10) {
+      setError("Please add your phone number in your profile before subscribing");
+      setTimeout(() => router.push("/dashboard/profile"), 2000);
+      return;
+    }
+
     setLoading(true);
 
     try {
-      // TODO: Get actual user data from auth context
-      const userId = "user_123"; // Replace with actual user ID
-      const userEmail = "user@example.com"; // Replace with actual user email
-      const userName = "John Doe"; // Replace with actual user name
-      const userPhone = "9876543210"; // Replace with actual user phone
+      const userId = user.uid;
+      const userEmail = user.email || "";
+      const userName = user.displayName || userEmail.split("@")[0];
+      const userPhone = userProfile.phone;
 
       // Parse price (remove ₹ and comma)
       const price = parseFloat(
@@ -123,18 +166,28 @@ export function SubscriptionCard({ plan }: { plan: SubscriptionPlan }) {
           </div>
         </div>
       </CardContent>
-      <CardFooter>
+      <CardFooter className="flex-col gap-3">
+        {error && (
+          <Alert variant="destructive" className="w-full">
+            <AlertCircle className="size-4" />
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
         <Button
           className="w-full"
           variant={plan.highlighted ? "default" : "outline"}
           onClick={handleSubscribe}
-          disabled={loading}
+          disabled={loading || authLoading || !user}
         >
           {loading ? (
             <>
               <Loader2 className="mr-2 size-4 animate-spin" />
               Processing...
             </>
+          ) : authLoading ? (
+            "Loading..."
+          ) : !user ? (
+            "Sign In to Subscribe"
           ) : (
             `Subscribe to ${plan.name}`
           )}
