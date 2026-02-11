@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -99,12 +100,12 @@ export function SubscriptionCard({ plan }: { plan: SubscriptionPlan }) {
       if (result.success && result.payuParams && result.payuUrl) {
         redirectToPayU(result.payuUrl, result.payuParams);
       } else {
-        alert(result.message || "Failed to create order");
+        toast.error(result.message || "Failed to create order");
         setLoading(false);
       }
     } catch (error) {
       console.error("Payment error:", error);
-      alert("Failed to initiate payment. Please try again.");
+      toast.error("Failed to initiate payment. Please try again.");
       setLoading(false);
     }
   };
