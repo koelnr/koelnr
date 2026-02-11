@@ -3,9 +3,9 @@ export const siteConfig = {
   tagline: "Doorstep Car Care, Done Right",
   description:
     "Professional doorstep car wash services in Ludhiana. Subscriptions for daily care, on-demand washes when you need them.",
-  phone: "+91 98765 43210",
+  phone: "+91 98787 81378",
   email: "hello@koelnr.in",
-  whatsapp: "919876543210",
+  whatsapp: "919878781378",
   address: "Ludhiana, Punjab, India",
   serviceSlots: {
     morning: ["6:00 – 8:00 AM", "8:00 – 10:00 AM", "10:00 – 11:30 AM"],
