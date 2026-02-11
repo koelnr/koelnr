@@ -6,6 +6,20 @@ import { FieldValue } from "firebase-admin/firestore";
 
 export async function POST(request: NextRequest) {
   try {
+    // Verify webhook authentication
+    const authHeader = request.headers.get("authorization");
+    const webhookSecret = process.env.PAYU_WEBHOOK_SECRET;
+
+    if (!webhookSecret) {
+      console.error("PAYU_WEBHOOK_SECRET not configured");
+      return NextResponse.json({ error: "Server configuration error" }, { status: 500 });
+    }
+
+    if (!authHeader || authHeader !== `Bearer ${webhookSecret}`) {
+      console.error("Webhook: Unauthorized request");
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     // Parse form data from PayU webhook
     const formData = await request.formData();
 

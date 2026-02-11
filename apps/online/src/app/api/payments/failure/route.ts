@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { adminDb } from "@/lib/firebase-admin";
+import { verifyPayUHash } from "@/lib/payu-hash";
 import type { PayUResponse } from "@/lib/payu-hash";
 import { FieldValue } from "firebase-admin/firestore";
 
@@ -21,6 +22,14 @@ export async function POST(request: NextRequest) {
       error: formData.get("error") as string,
       error_Message: formData.get("error_Message") as string,
     };
+
+    // Verify hash to prevent tampering
+    if (!verifyPayUHash(response)) {
+      console.error("Hash verification failed for failed payment, txnid:", response.txnid);
+      return NextResponse.redirect(
+        new URL("/dashboard/payments/failure?error=invalid_hash", request.url),
+      );
+    }
 
     const orderId = response.udf1;
     const errorMessage = response.error_Message || response.error || "Payment failed";
