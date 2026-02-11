@@ -2,11 +2,14 @@
 
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
+import { updateProfile, updatePassword, reauthenticateWithCredential, EmailAuthProvider } from "firebase/auth";
+import { FirebaseError } from "firebase/app";
 import { useAuthStore } from "@/stores/auth-store";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { getFirebaseError } from "@/lib/utils";
 import {
   Select,
   SelectContent,
@@ -34,9 +37,24 @@ export default function ProfilePage() {
   const [address, setAddress] = useState("");
   const [vehicleType, setVehicleType] = useState<VehicleType>("hatchSedan");
 
+  // Name editing state
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [displayName, setDisplayName] = useState("");
+  const [savingName, setSavingName] = useState(false);
+
+  // Password change state
+  const [showPasswordChange, setShowPasswordChange] = useState(false);
+  const [passwordData, setPasswordData] = useState({
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+  });
+  const [savingPassword, setSavingPassword] = useState(false);
+
   // Load user profile
   useEffect(() => {
     if (user) {
+      setDisplayName(user.displayName || "");
       getUserProfile(user.uid).then((data) => {
         if (data) {
           setProfile(data);
@@ -52,6 +70,31 @@ export default function ProfilePage() {
   const handleSignOut = async () => {
     await signOut();
     router.push("/");
+  };
+
+  const handleSaveName = async () => {
+    if (!user) return;
+
+    const trimmedName = displayName.trim();
+    if (!trimmedName) {
+      toast.error("Name cannot be empty");
+      return;
+    }
+
+    setSavingName(true);
+    try {
+      await updateProfile(user, { displayName: trimmedName });
+      toast.success("Name updated successfully");
+      setIsEditingName(false);
+    } catch (error) {
+      if (error instanceof FirebaseError) {
+        toast.error(getFirebaseError(error.code));
+      } else {
+        toast.error("Failed to update name");
+      }
+    } finally {
+      setSavingName(false);
+    }
   };
 
   const handleSaveProfile = async () => {
@@ -91,6 +134,55 @@ export default function ProfilePage() {
     }
   };
 
+  const handleChangePassword = async () => {
+    if (!user?.email) return;
+
+    // Validation
+    if (!passwordData.currentPassword || !passwordData.newPassword || !passwordData.confirmPassword) {
+      toast.error("Please fill in all password fields");
+      return;
+    }
+
+    if (passwordData.newPassword.length < 6) {
+      toast.error("New password must be at least 6 characters");
+      return;
+    }
+
+    if (passwordData.newPassword !== passwordData.confirmPassword) {
+      toast.error("New passwords do not match");
+      return;
+    }
+
+    setSavingPassword(true);
+    try {
+      // Re-authenticate user
+      const credential = EmailAuthProvider.credential(
+        user.email,
+        passwordData.currentPassword
+      );
+      await reauthenticateWithCredential(user, credential);
+
+      // Update password
+      await updatePassword(user, passwordData.newPassword);
+
+      toast.success("Password updated successfully");
+      setShowPasswordChange(false);
+      setPasswordData({
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+      });
+    } catch (error) {
+      if (error instanceof FirebaseError) {
+        toast.error(getFirebaseError(error.code));
+      } else {
+        toast.error("Failed to update password");
+      }
+    } finally {
+      setSavingPassword(false);
+    }
+  };
+
   return (
     <div className="space-y-8">
       <div>
@@ -112,11 +204,50 @@ export default function ProfilePage() {
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="name">Full Name</Label>
-              <Input
-                id="name"
-                placeholder="Enter your name"
-                defaultValue={user?.displayName || ""}
-              />
+              <div className="flex gap-2">
+                <Input
+                  id="name"
+                  placeholder="Enter your name"
+                  value={displayName}
+                  onChange={(e) => setDisplayName(e.target.value)}
+                  disabled={!isEditingName}
+                  className={!isEditingName ? "bg-muted" : ""}
+                />
+                {!isEditingName ? (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setIsEditingName(true)}
+                  >
+                    Edit
+                  </Button>
+                ) : (
+                  <>
+                    <Button
+                      type="button"
+                      onClick={handleSaveName}
+                      disabled={savingName}
+                    >
+                      {savingName ? (
+                        <Loader2 className="size-4 animate-spin" />
+                      ) : (
+                        "Save"
+                      )}
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => {
+                        setIsEditingName(false);
+                        setDisplayName(user?.displayName || "");
+                      }}
+                      disabled={savingName}
+                    >
+                      Cancel
+                    </Button>
+                  </>
+                )}
+              </div>
             </div>
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
@@ -222,6 +353,103 @@ export default function ProfilePage() {
           <p className="text-xs text-muted-foreground">
             Vehicle details coming soon
           </p>
+        </CardContent>
+      </Card>
+
+      {/* Password Change */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Change Password</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {!showPasswordChange ? (
+            <Button
+              variant="outline"
+              onClick={() => setShowPasswordChange(true)}
+            >
+              Change Password
+            </Button>
+          ) : (
+            <>
+              <div className="space-y-2">
+                <Label htmlFor="current-password">Current Password</Label>
+                <Input
+                  id="current-password"
+                  type="password"
+                  placeholder="Enter current password"
+                  value={passwordData.currentPassword}
+                  onChange={(e) =>
+                    setPasswordData((prev) => ({
+                      ...prev,
+                      currentPassword: e.target.value,
+                    }))
+                  }
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="new-password">New Password</Label>
+                <Input
+                  id="new-password"
+                  type="password"
+                  placeholder="Enter new password (min 6 characters)"
+                  value={passwordData.newPassword}
+                  onChange={(e) =>
+                    setPasswordData((prev) => ({
+                      ...prev,
+                      newPassword: e.target.value,
+                    }))
+                  }
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="confirm-password">Confirm New Password</Label>
+                <Input
+                  id="confirm-password"
+                  type="password"
+                  placeholder="Confirm new password"
+                  value={passwordData.confirmPassword}
+                  onChange={(e) =>
+                    setPasswordData((prev) => ({
+                      ...prev,
+                      confirmPassword: e.target.value,
+                    }))
+                  }
+                />
+              </div>
+
+              <div className="flex gap-2">
+                <Button
+                  onClick={handleChangePassword}
+                  disabled={savingPassword}
+                >
+                  {savingPassword ? (
+                    <>
+                      <Loader2 className="mr-2 size-4 animate-spin" />
+                      Updating...
+                    </>
+                  ) : (
+                    "Update Password"
+                  )}
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setShowPasswordChange(false);
+                    setPasswordData({
+                      currentPassword: "",
+                      newPassword: "",
+                      confirmPassword: "",
+                    });
+                  }}
+                  disabled={savingPassword}
+                >
+                  Cancel
+                </Button>
+              </div>
+            </>
+          )}
         </CardContent>
       </Card>
 
