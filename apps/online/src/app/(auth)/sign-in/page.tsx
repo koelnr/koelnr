@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Suspense } from "react";
 import {
   Card,
   CardContent,
@@ -29,7 +30,9 @@ export default function SignInPage() {
           </CardHeader>
 
           <CardContent>
-            <SignInForm />
+            <Suspense fallback={<div className="h-64" />}>
+              <SignInForm />
+            </Suspense>
           </CardContent>
 
           <CardFooter className="justify-center">

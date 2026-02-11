@@ -44,9 +44,10 @@ export async function submitContactForm(formData: ContactFormData) {
       return {
         success: false,
         message: "Please check your form inputs",
-        errors: error.errors.reduce(
+        errors: error.issues.reduce(
           (acc, err) => {
-            acc[err.path[0]] = err.message;
+            const key = String(err.path[0]);
+            acc[key] = err.message;
             return acc;
           },
           {} as Record<string, string>,
@@ -103,9 +104,10 @@ export async function signIn(formData: SignInData) {
       return {
         success: false,
         message: "Please check your form inputs",
-        errors: error.errors.reduce(
+        errors: error.issues.reduce(
           (acc, err) => {
-            acc[err.path[0]] = err.message;
+            const key = String(err.path[0]);
+            acc[key] = err.message;
             return acc;
           },
           {} as Record<string, string>,
@@ -148,9 +150,10 @@ export async function signUp(formData: SignUpData) {
       return {
         success: false,
         message: "Please check your form inputs",
-        errors: error.errors.reduce(
+        errors: error.issues.reduce(
           (acc, err) => {
-            acc[err.path[0]] = err.message;
+            const key = String(err.path[0]);
+            acc[key] = err.message;
             return acc;
           },
           {} as Record<string, string>,
@@ -185,9 +188,10 @@ export async function forgotPassword(formData: ForgotPasswordData) {
       return {
         success: false,
         message: "Please check your form inputs",
-        errors: error.errors.reduce(
+        errors: error.issues.reduce(
           (acc, err) => {
-            acc[err.path[0]] = err.message;
+            const key = String(err.path[0]);
+            acc[key] = err.message;
             return acc;
           },
           {} as Record<string, string>,
@@ -323,7 +327,7 @@ export async function createPaymentOrder(data: CreateOrderData): Promise<{
     if (error instanceof z.ZodError) {
       return {
         success: false,
-        message: "Invalid order data: " + error.errors.map((e) => e.message).join(", "),
+        message: "Invalid order data: " + error.issues.map((e) => e.message).join(", "),
       };
     }
 

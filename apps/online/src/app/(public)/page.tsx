@@ -376,7 +376,7 @@ function Pricing({
                   variant={plan.highlighted ? "default" : "outline"}
                   asChild
                 >
-                  <Link href="/dashboard/plans">Subscribe</Link>
+                  <Link href="/dashboard/subscriptions">Subscribe</Link>
                 </Button>
               </CardFooter>
             </Card>

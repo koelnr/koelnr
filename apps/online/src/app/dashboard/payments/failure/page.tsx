@@ -40,7 +40,7 @@ export default function PaymentFailurePage() {
                 <Link href="/dashboard">Go to Dashboard</Link>
               </Button>
               <Button asChild variant="outline" className="w-full">
-                <Link href="/dashboard/plans">Try Again</Link>
+                <Link href="/dashboard/subscriptions">Try Again</Link>
               </Button>
             </div>
           </div>
