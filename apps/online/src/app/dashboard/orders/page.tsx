@@ -86,38 +86,41 @@ export default function OrdersPage() {
           ) : orders.length > 0 ? (
             <div className="space-y-4">
               {orders.map((order) => (
-                <Card key={order.id}>
-                  <CardContent className="pt-6">
-                    <div className="flex items-start justify-between">
-                      <div className="space-y-1 flex-1">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <p className="font-semibold text-sm">Order #{order.id.slice(-6)}</p>
-                          <Badge variant={getStatusVariant(order.status)}>
-                            {order.status}
-                          </Badge>
-                          <Badge variant="outline" className="capitalize">
-                            {order.type}
-                          </Badge>
-                        </div>
-                        <p className="text-sm text-muted-foreground">
-                          {order.items.map(item => item.name).join(", ")}
-                        </p>
-                        <p className="text-sm text-muted-foreground">
-                          {formatDate(order.createdAt)}
-                        </p>
-                        {order.paymentMode && (
-                          <p className="text-xs text-muted-foreground capitalize">
-                            Payment: {order.paymentMode}
+                <Link key={order.id} href={`/dashboard/orders/${order.id}`}>
+                  <Card className="hover:border-primary transition-colors cursor-pointer">
+                    <CardContent className="pt-6">
+                      <div className="flex items-start justify-between">
+                        <div className="space-y-1 flex-1">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <p className="font-semibold text-sm">Order #{order.id.slice(-6)}</p>
+                            <Badge variant={getStatusVariant(order.status)}>
+                              {order.status}
+                            </Badge>
+                            <Badge variant="outline" className="capitalize">
+                              {order.type}
+                            </Badge>
+                          </div>
+                          <p className="text-sm text-muted-foreground">
+                            {order.items.map(item => item.name).join(", ")}
                           </p>
-                        )}
+                          <p className="text-sm text-muted-foreground">
+                            {formatDate(order.createdAt)}
+                          </p>
+                          {order.paymentMode && (
+                            <p className="text-xs text-muted-foreground capitalize">
+                              Payment: {order.paymentMode}
+                            </p>
+                          )}
+                        </div>
+                        <div className="text-right ml-4">
+                          <p className="font-bold">₹{order.totalAmount}</p>
+                          <p className="text-xs text-muted-foreground">{order.currency}</p>
+                          <ArrowRight className="size-4 mt-1 text-muted-foreground" />
+                        </div>
                       </div>
-                      <div className="text-right ml-4">
-                        <p className="font-bold">₹{order.totalAmount}</p>
-                        <p className="text-xs text-muted-foreground">{order.currency}</p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                    </CardContent>
+                  </Card>
+                </Link>
               ))}
             </div>
           ) : (
